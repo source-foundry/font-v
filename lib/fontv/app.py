@@ -8,7 +8,7 @@ from commandlines import Command
 from fontTools import ttLib
 
 from fontv import settings
-from fontv.utilities import file_exists, dir_exists
+from fontv.utilities import file_exists
 
 
 def main():
@@ -46,9 +46,51 @@ def main():
             else:
                 sys.stderr.write("[font-v] ERROR: The arguments did not include a ttf or otf font file" + os.linesep)
                 sys.exit(1)
-
     elif c.subcmd == "write":
-        pass
+        # argument parsing flags
+        add_sha1 = False
+        add_release_string = False
+        add_dev_string = False
+        add_new_version = False
+        delete_post_string = False
+        fontpath_list = []            # list of font paths that user submits on command line
+        version_substring_one = ""    # used for 'Version X.XXX part'
+        version_substring_two = ""    # used for sha1 commit part (optional, if requested)
+        version_substring_three = ""  # used for anything that existed after first ; in pre-modified nameID 5 string
+
+        # test for mutually exclusive arguments
+        # do not refactor this below the level of the argument tests that follow
+        if "--rel" in c.argv and "--dev" in c.argv:
+            sys.stderr.write("[font-v] ERROR: Please use either --dev or --rel argument, not both" + os.linesep)
+            sys.exit(1)
+
+        # test arguments
+        for arg in c.argv[1:]:
+            if arg == "--sha1":
+                add_sha1 = True
+            elif arg == "--rel":
+                add_release_string = True
+            elif arg == "--dev":
+                add_dev_string = True
+            elif arg == "--delete":
+                delete_post_string = True
+            elif arg[0:6] == "--ver=":
+                add_new_version = True
+            elif len(arg) > 4 and (arg[-4:].lower() == ".ttf" or arg[-4:].lower() == ".otf"):
+                if file_exists(arg):
+                    fontpath_list.append(arg)
+                else:
+                    sys.stderr.write("[font-v] ERROR: " + arg + " does not appear to be a valid font file path." + os.linesep)
+                    sys.exit(1)
+
+        print(fontpath_list)
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     main()
