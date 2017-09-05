@@ -32,6 +32,10 @@ $ pip install --upgrade font-v
 
 ## Usage
 
+```
+$ font-v [subcommand] (options) [font path 1] ([font path ...])
+```
+
 ### Available subcommands and options
 
 - `report` - report OpenType name table nameID 5 record
