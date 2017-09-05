@@ -1,6 +1,8 @@
 
 ![](https://github.com/source-foundry/font-v/raw/images/images/font-v-crunch.png)
 
+[![Build Status](https://travis-ci.org/source-foundry/font-v.svg?branch=master)](https://travis-ci.org/source-foundry/font-v)  [![Build status](https://ci.appveyor.com/api/projects/status/mtbar0q307926xff/branch/master?svg=true)](https://ci.appveyor.com/project/chrissimpkins/font-v/branch/master)
+
 ## About
 
 font-v is a font version string reporting and modification tool.  It reports and modifies the OpenType name table nameID 5 record in ttf and otf fonts.  
