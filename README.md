@@ -85,7 +85,7 @@ The short SHA1 hash digest is added with the following version string formatting
 Version 1.000; cf8dc25
 ```
 
-This can be combined with other options (e.g. to modify the version number or add other metadata) in the same command.  All data that followed the version number prior to modification is preserved and appended after the SHA1 hash + a semicolon.
+This can be combined with other options (e.g. to modify the version number or add other metadata) in the same command.  All data that followed the version number prior to modification are preserved and appended after the SHA1 hash + a semicolon.
 
 ### Add development / release metadata to version string
 
@@ -133,7 +133,7 @@ Example-Regular.ttf:
 Version 1.000; cf8dc25-release
 ```
 
-Any data that followed the original version string is maintained and appended after a semicolon.
+Any data that followed the original version string are maintained and appended after a semicolon.
 
 ## Acknowledgments
 
