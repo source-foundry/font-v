@@ -8,6 +8,10 @@ font-v is a font version string reporting and modification tool.  It reports and
 font-v is built with Python and can be used from the command line on Linux, OS X, and Windows platforms.
 
 
+## Project status
+
+In development
+
 ## Installation
 
 ### Install with pip
