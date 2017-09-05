@@ -10,7 +10,7 @@ font-v is built with Python and can be used from the command line on Linux, OS X
 
 ## Project status
 
-In development
+In development, unstable
 
 ## Installation
 
