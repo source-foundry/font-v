@@ -23,7 +23,8 @@ def main():
     c = Command()
 
     if c.does_not_validate_missing_args():
-        sys.stderr.write("[font-v] ERROR: Please include the appropriate arguments with your command." + os.linesep)
+        sys.stderr.write("[font-v] ERROR: Please include a subcommand and appropriate optional arguments in "
+                         "your command." + os.linesep)
         sys.exit(1)
 
     if c.is_help_request():
@@ -37,6 +38,12 @@ def main():
         sys.exit(0)
 
     if c.subcmd == "report":
+        # argument test
+        if c.argc < 2:
+            sys.stderr.write("[font-v] ERROR: Command is missing necessary arguments. Check "
+                             "`font-v --help`." + os.linesep)
+            sys.exit(1)
+
         for arg in c.argv[1:]:
             if arg[-4:].lower() == ".ttf" or arg[-4:].lower() == ".otf":
                 font_path = arg
@@ -52,9 +59,15 @@ def main():
                                 print(fobj.get_print_string())
                                 break  # print a single version string if there are multiple name records by default
                 else:
-                    print("[font-v] ERROR: " + font_path + " does not appear to be a valid ttf or otf font file path")
+                    print("[font-v] ERROR: " + font_path + " does not appear to be a valid ttf or otf font file path.")
                     sys.exit(1)
     elif c.subcmd == "write":
+        # argument test
+        if c.argc < 2:
+            sys.stderr.write("[font-v] ERROR: Command is missing necessary arguments. "
+                             "Check `font-v --help`." + os.linesep)
+            sys.exit(1)
+
         # argument parsing flags
         add_sha1 = False
         add_release_string = False
@@ -66,7 +79,7 @@ def main():
         # test for mutually exclusive arguments
         # do not refactor this below the level of the argument tests that follow
         if "--rel" in c.argv and "--dev" in c.argv:
-            sys.stderr.write("[font-v] ERROR: Please use either --dev or --rel argument, not both" + os.linesep)
+            sys.stderr.write("[font-v] ERROR: Please use either --dev or --rel argument, not both." + os.linesep)
             sys.exit(1)
 
         # test arguments
@@ -81,7 +94,7 @@ def main():
                 add_new_version = True
                 version_list = arg.split("=")  # split on the = symbol and use second part as definition
                 if len(version_list) < 2:
-                    sys.stderr.write("[font-v] ERROR: --arg=version argument is not properly specified")
+                    sys.stderr.write("[font-v] ERROR: --arg=version argument is not properly specified.")
                     sys.exit(1)
                 version_pre = version_list[1]
                 version_pre = version_pre.replace("-", ".")   # specified on command line as 1-000
@@ -91,7 +104,8 @@ def main():
                 if file_exists(arg):
                     fontpath_list.append(arg)
                 else:
-                    sys.stderr.write("[font-v] ERROR: " + arg + " does not appear to be a valid font file path." + os.linesep)
+                    sys.stderr.write("[font-v] ERROR: " + arg + " does not appear to be a valid "
+                                     "font file path." + os.linesep)
                     sys.exit(1)
 
         if add_sha1 is False and add_release_string is False and add_dev_string is False and add_new_version is False:
@@ -214,12 +228,12 @@ def get_git_root_path():
             elif dir_exists(three_levels_up_path):  # check three directory levels up
                 verified_gitroot_path = os.path.dirname(three_levels_up_path)
             else:
-                sys.stderr.write("[font-v] ERROR: Unable to identify the root of your git repository."
-                                 " Please try again from the root of your repository" + os.linesep)
+                sys.stderr.write("[font-v] ERROR: Unable to identify the root of your git repository. "
+                                 "Please try again from the root of your repository." + os.linesep)
                 sys.exit(1)
     except Exception as e:
-        sys.stderr.write("[font-v] ERROR: Unable to identify the root of your git repository. Please try again from "
-                         "the root of your repository. " + str(e) + os.linesep)
+        sys.stderr.write("[font-v] ERROR: Unable to identify the root of your git repository. "
+                         "Please try again from the root of your repository. " + str(e) + os.linesep)
         sys.exit(1)
 
     return verified_gitroot_path
