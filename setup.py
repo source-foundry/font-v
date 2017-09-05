@@ -30,7 +30,7 @@ def version_read():
 setup(
     name='font-v',
     version=version_read(),
-    description='Font version string tool',
+    description='Font version reporting and modification tool',
     long_description=(docs_read('README.rst')),
     url='https://github.com/source-foundry/font-v',
     license='MIT license',
@@ -44,7 +44,7 @@ setup(
         'console_scripts': [
             'font-v = fontv.app:main'
         ],
-},
+    },
     keywords='',
     include_package_data=True,
     classifiers=[
