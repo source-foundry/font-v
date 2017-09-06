@@ -13,6 +13,7 @@ import sys
 
 from commandlines import Command
 from fontTools import ttLib
+from fontTools.misc.py23 import tounicode, unicode
 from git import Repo
 
 from fontv import settings
@@ -94,9 +95,19 @@ def main():
                 add_new_version = True
                 version_list = arg.split("=")  # split on the = symbol and use second part as definition
                 if len(version_list) < 2:
-                    sys.stderr.write("[font-v] ERROR: --arg=version argument is not properly specified.")
+                    sys.stderr.write("[font-v] ERROR: --arg=version argument is not properly specified." + os.linesep)
                     sys.exit(1)
-                version_pre = version_list[1]
+                # use fonttools library to cast terminal input from user to fontTools.misc.py23.unicode type (imported)
+                # this will be Python 3 str object and Python 2 unicode object
+                # try to cast to this type and catch decoding exceptions, handle with error message to user.
+                try:
+                    version_pre = tounicode(version_list[1], encoding='ascii')
+                except UnicodeDecodeError as e:
+                    sys.stderr.write("[font-v] ERROR: You appear to have entered a non ASCII character in your"
+                                     "version string.  Please try again." + os.linesep)
+                    sys.stderr.write("[fontTools library]: error message: " + str(e))
+                    sys.exit(1)
+
                 version_pre = version_pre.replace("-", ".")   # specified on command line as 1-000
                 version_final = version_pre.replace("_", ".")   # or as 1_000
                 version = "Version " + version_final
@@ -143,14 +154,9 @@ def main():
                     if len(post_string) > 0:
                         post_string_add = ";" + post_string
                         version_string += post_string_add
-
-                    if record.platformID == 0:
-                        record.string = version_string.encode('utf_16_be')  # Unicode platform ID gets UTF16
-                    elif record.platformID == 1:
-                        record.string = version_string                      # Mac platform ID
-                    elif record.platformID == 3:
-                        record.string = version_string.encode('utf_16_be')  # Windows platform ID gets UTF16
-            # write out the modifications to the font name table
+                    # write to fonttools ttLib object name table record
+                    record.string = version_string
+            # then write out the name table modifications to the font binary
             tt.save(fontpath)
             print(fontpath + " version string successfully updated.")
 
@@ -162,7 +168,7 @@ class FontVersionObj(object):
         self.platEncID = name_id5_record.platEncID
         self.langID = name_id5_record.langID
         self.nameID = name_id5_record.nameID
-        self.version_string = name_id5_record.string
+        self.version_string = name_id5_record.toUnicode()  # name_id5_record.string cast to str in Py3 / unicode in Py2
         self.version_parts_list = []
 
         self._make_version_parts_list()
@@ -193,7 +199,22 @@ class FontVersionObj(object):
 
     def get_post_string(self):
         if len(self.version_parts_list) > 2:
-            return ";".join(self.version_parts_list[1:])  # return ; delimited list if there were multiple parts
+            filtered_post_list = []   # maintains a list of string parts that pass filters below
+            for part in self.version_parts_list[1:]:
+                if part.strip() in ["DEV", "RELEASE"]:
+                    pass
+                elif part[-4:] == "-dev":
+                    pass
+                elif part[-8:] == "-release":
+                    pass
+                else:
+                    filtered_post_list.append(part)
+            if len(filtered_post_list) > 1:
+                return ";".join(self.version_parts_list[1:])  # return ; delimited string if there were multiple parts
+            elif len(filtered_post_list) == 1:
+                return filtered_post_list[0]                # return the value only if this filter eliminated all but one
+            else:
+                return ""                                 #  return empty string if filter removed all other strings
         elif len(self.version_parts_list) == 2:
             return self.version_parts_list[1]            # return just the post string if only one post part
         else:
