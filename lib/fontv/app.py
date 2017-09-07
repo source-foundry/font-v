@@ -186,8 +186,12 @@ class FontVersionObj(object):
     def get_repo_commit(self):
         repo = Repo(get_git_root_path())
         gitpy = repo.git
-        full_sha_string = gitpy.rev_parse("HEAD")
-        return full_sha_string[0:7]  # return first 7 characters of the sha1 string (=short sha1 string definition)
+        # git rev-list --abbrev-commit --max-count=1 --format="%h" HEAD - abbreviated unique sha1 for the repository
+        # number of sha1 hex characters determined by git (addresses https://github.com/source-foundry/font-v/issues/2)
+        full_git_sha_string = gitpy.rev_list('--abbrev-commit', '--max-count=1', '--format="%h"', 'HEAD')
+        sha_string_list = full_git_sha_string.split(os.linesep)
+        final_sha_string = sha_string_list[1].replace('"', '')
+        return final_sha_string
 
     def get_print_string(self):
         return self.fontpath + ":" + os.linesep + self.version_string
