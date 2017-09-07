@@ -14,6 +14,7 @@ import sys
 from commandlines import Command
 from fontTools import ttLib
 from fontTools.misc.py23 import tounicode, unicode
+from fontTools.misc.encodingTools import getEncoding
 from git import Repo
 
 from fontv import settings
@@ -163,6 +164,7 @@ def main():
         sys.stderr.write("[font-v] ERROR: Please enter a font-v subcommand with your request." + os.linesep)
         sys.exit(1)
 
+
 class FontVersionObj(object):
     def __init__(self, font_path, name_id5_record):
         self.fontpath = font_path
@@ -191,9 +193,13 @@ class FontVersionObj(object):
         return self.fontpath + ":" + os.linesep + self.version_string
 
     def get_dev_print_string(self):
+        encoding_str = getEncoding(self.platformID, self.platEncID, self.langID)
+        if encoding_str is None:
+            encoding_str = "unknown"  # if fontTools.misc.encodingTools.getEncoding returns None, encoding not detected
         recordtype_list = [str(self.platformID), str(self.platEncID), str(self.langID), str(self.nameID)]
         recordtype_string = "/".join(recordtype_list)
-        print_string = self.fontpath + " [" + recordtype_string + "]:" + os.linesep + self.version_string
+        print_string = self.fontpath + " [" + recordtype_string + " (encoding='" \
+                                       "" + encoding_str + "')]:" + os.linesep + self.version_string
         return print_string
 
     def get_version_string(self):
@@ -214,9 +220,9 @@ class FontVersionObj(object):
             if len(filtered_post_list) > 1:
                 return ";".join(self.version_parts_list[1:])  # return ; delimited string if there were multiple parts
             elif len(filtered_post_list) == 1:
-                return filtered_post_list[0]                # return the value only if this filter eliminated all but one
+                return filtered_post_list[0]               # return the value only if this filter eliminated all but one
             else:
-                return ""                                 #  return empty string if filter removed all other strings
+                return ""                                 # return empty string if filter removed all other strings
         elif len(self.version_parts_list) == 2:
             return self.version_parts_list[1]            # return just the post string if only one post part
         else:
