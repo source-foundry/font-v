@@ -1,5 +1,12 @@
 ## Changelog
 
-v0.2.0
+### v0.3.0
+
+- added stdout reporting of name record encoding with new --dev flag for report command
+- added new git sha1 string length approach to address collisions (issue #2)
+- fixed duplicated dev/release strings
+- added new command line subcommand error handling
+
+### v0.2.0
 
 - initial release
