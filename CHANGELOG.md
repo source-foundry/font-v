@@ -2,7 +2,7 @@
 
 ### v.0.3.1
 
-- bug fix for incorrect git sha1 string encoding in the version string (issue #)
+- bug fix for incorrect git sha1 string encoding in the version string (issue #12)
 
 ### v0.3.0
 
