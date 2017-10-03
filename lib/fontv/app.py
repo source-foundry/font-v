@@ -134,7 +134,7 @@ def main():
                     if add_new_version is True:
                         version_string = version
                     else:
-                        version_string = fvo.version_parts_list[0]
+                        version_string = fvo.get_version_string()
 
                     if add_sha1 is True:
                         sha_string = "; " + fvo.get_repo_commit()
@@ -189,7 +189,8 @@ class FontVersionObj(object):
         # git rev-list --abbrev-commit --max-count=1 --format="%h" HEAD - abbreviated unique sha1 for the repository
         # number of sha1 hex characters determined by git (addresses https://github.com/source-foundry/font-v/issues/2)
         full_git_sha_string = gitpy.rev_list('--abbrev-commit', '--max-count=1', '--format="%h"', 'HEAD')
-        sha_string_list = full_git_sha_string.split(os.linesep)
+        unicode_full_sha_string = tounicode(full_git_sha_string)
+        sha_string_list = unicode_full_sha_string.split(os.linesep)
         final_sha_string = sha_string_list[1].replace('"', '')
         return final_sha_string
 
