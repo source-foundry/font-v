@@ -1,5 +1,9 @@
 ## Changelog
 
+### v.0.3.1
+
+- bug fix for incorrect git sha1 string encoding in the version string (issue #)
+
 ### v0.3.0
 
 - added stdout reporting of name record encoding with new --dev flag for report command
