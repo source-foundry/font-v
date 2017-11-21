@@ -159,7 +159,8 @@ def main():
                     record.string = version_string
             # then write out the name table modifications to the font binary
             tt.save(fontpath)
-            print(fontpath + " version string successfully updated.")
+            print("[✓] " + fontpath + " version string was successfully changed "
+                  "to:" + os.linesep + version_string + os.linesep)
     else:  # user did not enter an acceptable subcommand
         sys.stderr.write("[font-v] ERROR: Please enter a font-v subcommand with your request." + os.linesep)
         sys.exit(1)
