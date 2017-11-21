@@ -1,6 +1,10 @@
 ## Changelog
 
-### v.0.3.1
+### v0.3.2
+
+- bug fix for DEV/RELEASE version substring duplication when there are two version substrings (#7)
+
+### v0.3.1
 
 - bug fix for incorrect git sha1 string encoding in the version string (issue #12)
 
