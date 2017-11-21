@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.3.3
+
+- added modified version string notification to standard output stream on new version writes (#13)
+
 ### v0.3.2
 
 - bug fix for DEV/RELEASE version substring duplication when there are two version substrings (#7)
