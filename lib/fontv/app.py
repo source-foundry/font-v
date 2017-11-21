@@ -211,7 +211,7 @@ class FontVersionObj(object):
         return self.version_parts_list[0]   # anything before first ';' in version string name record
 
     def get_post_string(self):
-        if len(self.version_parts_list) > 2:
+        if len(self.version_parts_list) > 1:
             filtered_post_list = []   # maintains a list of string parts that pass filters below
             for part in self.version_parts_list[1:]:
                 if part.strip() in ["DEV", "RELEASE"]:
