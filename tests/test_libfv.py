@@ -3,12 +3,10 @@
 
 from __future__ import unicode_literals
 
-import sys
 import pytest
 
 
 from fontv.libfv import FontVersion
-from fontTools.ttLib import TTFont
 
 # TEST FONT FILE CREATION
 # fv = FontVersion("testfiles/Hack-Regular.ttf")
@@ -96,6 +94,11 @@ all_testfiles_list = [
     "tests/testfiles/Test-VersionShaRELMeta.ttf"
 ]
 
+meta_testfiles_list = [
+    "tests/testfiles/Test-VersionMeta.ttf",
+    "tests/testfiles/Test-VersionMoreMeta.ttf"
+]
+
 dev_testfiles_list = [
     "tests/testfiles/Test-VersionDEV.ttf",
     "tests/testfiles/Test-VersionDEVMeta.ttf",
@@ -118,6 +121,11 @@ def allfonts(request):
     return request.param
 
 
+@pytest.fixture(params=meta_testfiles_list)
+def metafonts(request):
+    return request.param
+
+
 @pytest.fixture(params=dev_testfiles_list)
 def devfonts(request):
     return request.param
@@ -137,4 +145,70 @@ def test_libfv_fontversion_obj_instantiation(allfonts):
 def test_libfv_version_string_property_set_on_instantiation(allfonts):
     fv = FontVersion(allfonts)
     assert fv.version == "Version 1.010"
+
+
+def test_libfv_fontversion_object_parameter_properties_defaults(allfonts):
+    fv = FontVersion(allfonts)
+    assert fv.develop_string == "DEV"
+    assert fv.release_string == "RELEASE"
+    assert fv.sha1_develop == "-dev"
+    assert fv.sha1_release == "-release"
+
+
+def test_libfv_fontversion_object_properties_truth_defaults():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    assert fv.contains_metadata is False
+    assert fv.contains_status is False
+    assert fv.is_development is False
+    assert fv.is_release is False
+
+
+def test_libfv_fontversion_object_properties_truth_defaults_with_metaonly(metafonts):
+    fv = FontVersion(metafonts)
+    assert fv.contains_metadata is True
+    assert fv.contains_status is False
+    assert fv.is_development is False
+    assert fv.is_release is False
+
+
+def test_libfv_fontversion_object_properties_truth_development(devfonts):
+    fv = FontVersion(devfonts)
+    assert fv.contains_metadata is True
+    assert fv.contains_status is True
+    assert fv.is_development is True
+    assert fv.is_release is False
+
+
+def test_libfv_fontversion_object_properties_truth_release(relfonts):
+    fv = FontVersion(relfonts)
+    assert fv.contains_metadata is True
+    assert fv.contains_status is True
+    assert fv.is_development is False
+    assert fv.is_release is True
+
+
+def test_libfv_fontversion_object_versionparts_meta_lists_versionstring_only():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    assert len(fv.version_string_parts) == 1
+    assert len(fv.metadata) == 0
+
+
+def test_libfv_fontversion_object_versionparts_meta_lists_version_with_onemeta():
+    fv = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
+    assert len(fv.version_string_parts) == 2
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "metadata string"
+    assert len(fv.metadata) == 1
+    assert fv.metadata[0] == "metadata string"
+
+
+def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa():
+    fv = FontVersion("tests/testfiles/Test-VersionMoreMeta.ttf")
+    assert len(fv.version_string_parts) == 3
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "metadata string"
+    assert fv.version_string_parts[2] == "another metadata string"
+    assert len(fv.metadata) == 2
+    assert fv.metadata[0] == "metadata string"
+    assert fv.metadata[1] == "another metadata string"
 
