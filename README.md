@@ -1,7 +1,7 @@
 
 ![](https://github.com/source-foundry/font-v/raw/images/images/font-v-crunch.png)
 
-[![Build Status](https://travis-ci.org/source-foundry/font-v.svg?branch=master)](https://travis-ci.org/source-foundry/font-v)  [![Build status](https://ci.appveyor.com/api/projects/status/mtbar0q307926xff/branch/master?svg=true)](https://ci.appveyor.com/project/chrissimpkins/font-v/branch/master)
+[![Build Status](https://semaphoreci.com/api/v1/sourcefoundry/font-v/branches/master/badge.svg)](https://semaphoreci.com/sourcefoundry/font-v)  [![Build status](https://ci.appveyor.com/api/projects/status/mtbar0q307926xff/branch/master?svg=true)](https://ci.appveyor.com/project/chrissimpkins/font-v/branch/master)
 
 ## About
 
