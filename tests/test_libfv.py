@@ -250,6 +250,10 @@ def test_libfv_set_development_method_on_versiononly():
     assert len(fv.version_string_parts) == 2
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "DEV"
+    assert fv.is_development is True
+    assert fv.is_release is False
+    assert fv.contains_status is True
+    assert fv.contains_metadata is True
 
 
 def test_libfv_set_development_method_on_release(relfonts):
@@ -260,6 +264,10 @@ def test_libfv_set_development_method_on_release(relfonts):
     assert prelength == postlength
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "DEV"
+    assert fv.is_development is True
+    assert fv.is_release is False
+    assert fv.contains_status is True
+    assert fv.contains_metadata is True
 
 
 def test_libfv_set_development_method_on_development(devfonts):
@@ -270,6 +278,10 @@ def test_libfv_set_development_method_on_development(devfonts):
     assert prelength == postlength
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "DEV"
+    assert fv.is_development is True
+    assert fv.is_release is False
+    assert fv.contains_status is True
+    assert fv.contains_metadata is True
 
 
 def test_libfv_set_development_method_on_nostatus(metafonts):
@@ -280,6 +292,10 @@ def test_libfv_set_development_method_on_nostatus(metafonts):
     assert prelength == (postlength - 1)   # should add an additional substring to the version string here
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "DEV"
+    assert fv.is_development is True
+    assert fv.is_release is False
+    assert fv.contains_status is True
+    assert fv.contains_metadata is True
 
 
 def test_libfv_set_release_method_on_versiononly():
@@ -289,6 +305,10 @@ def test_libfv_set_release_method_on_versiononly():
     assert len(fv.version_string_parts) == 2
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "RELEASE"
+    assert fv.is_development is False
+    assert fv.is_release is True
+    assert fv.contains_status is True
+    assert fv.contains_metadata is True
 
 
 def test_libfv_set_release_method_on_release(relfonts):
@@ -299,6 +319,10 @@ def test_libfv_set_release_method_on_release(relfonts):
     assert prelength == postlength
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "RELEASE"
+    assert fv.is_development is False
+    assert fv.is_release is True
+    assert fv.contains_status is True
+    assert fv.contains_metadata is True
 
 
 def test_libfv_set_release_method_on_development(devfonts):
@@ -309,6 +333,10 @@ def test_libfv_set_release_method_on_development(devfonts):
     assert prelength == postlength
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "RELEASE"
+    assert fv.is_development is False
+    assert fv.is_release is True
+    assert fv.contains_status is True
+    assert fv.contains_metadata is True
 
 
 def test_libfv_set_releaese_method_on_nostatus(metafonts):
@@ -319,6 +347,10 @@ def test_libfv_set_releaese_method_on_nostatus(metafonts):
     assert prelength == (postlength - 1)   # should add an additional substring to the version string here
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "RELEASE"
+    assert fv.is_development is False
+    assert fv.is_release is True
+    assert fv.contains_status is True
+    assert fv.contains_metadata is True
 
 
 def test_libfv_set_version_number(allfonts):
