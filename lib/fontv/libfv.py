@@ -99,7 +99,7 @@ class FontVersion(object):
         # number of sha1 hex characters determined by git (addresses https://github.com/source-foundry/font-v/issues/2)
         full_git_sha_string = gitpy.rev_list('--abbrev-commit', '--max-count=1', '--format="%h"', 'HEAD')
         unicode_full_sha_string = tounicode(full_git_sha_string)
-        sha_string_list = unicode_full_sha_string.split(os.linesep)
+        sha_string_list = unicode_full_sha_string.split("\n")
         final_sha_string = sha_string_list[1].replace('"', '')
         return final_sha_string
 
