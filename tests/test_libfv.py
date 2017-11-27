@@ -8,6 +8,7 @@ import os.path
 
 import pytest
 
+from fontTools.ttLib import TTLibError
 
 from fontv.libfv import FontVersion
 
@@ -140,6 +141,16 @@ def relfonts(request):
 
 
 # TESTS
+
+def test_libfv_missing_file_read_attempt():
+    with pytest.raises(IOError):
+        fv = FontVersion("tests/testfiles/bogus.ttf")
+
+
+def test_libfv_nonfont_file_read_attempt():
+    with pytest.raises(TTLibError):
+        fv = FontVersion("tests/testfiles/test.txt")
+
 
 def test_libfv_fontversion_obj_instantiation(allfonts):
     fv = FontVersion(allfonts)
