@@ -3,6 +3,9 @@
 
 from __future__ import unicode_literals
 
+import os
+import os.path
+
 import pytest
 
 
@@ -211,4 +214,149 @@ def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa()
     assert len(fv.metadata) == 2
     assert fv.metadata[0] == "metadata string"
     assert fv.metadata[1] == "another metadata string"
+
+
+def test_libfv_clear_metadata_method(allfonts):
+    fv = FontVersion(allfonts)
+    fv.clear_metadata()
+    assert len(fv.version_string_parts) == 1
+    assert fv.version_string_parts[0] == "Version 1.010"
+
+
+def test_libfv_get_version_string_method():
+    fv1 = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv2 = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
+    fv3 = FontVersion("tests/testfiles/Test-VersionMoreMeta.ttf")
+    assert fv1.get_version_string() == "Version 1.010"
+    assert fv2.get_version_string() == "Version 1.010;metadata string"
+    assert fv3.get_version_string() == "Version 1.010;metadata string;another metadata string"
+
+
+def test_libfv_set_development_method_on_versiononly():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    assert len(fv.version_string_parts) == 1
+    fv.set_development_status()
+    assert len(fv.version_string_parts) == 2
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "DEV"
+
+
+def test_libfv_set_development_method_on_release(relfonts):
+    fv = FontVersion(relfonts)
+    prelength = len(fv.version_string_parts)
+    fv.set_development_status()
+    postlength = len(fv.version_string_parts)
+    assert prelength == postlength
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "DEV"
+
+
+def test_libfv_set_development_method_on_development(devfonts):
+    fv = FontVersion(devfonts)
+    prelength = len(fv.version_string_parts)
+    fv.set_development_status()
+    postlength = len(fv.version_string_parts)
+    assert prelength == postlength
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "DEV"
+
+
+def test_libfv_set_development_method_on_nostatus(metafonts):
+    fv = FontVersion(metafonts)
+    prelength = len(fv.version_string_parts)
+    fv.set_development_status()
+    postlength = len(fv.version_string_parts)
+    assert prelength == (postlength - 1)   # should add an additional substring to the version string here
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "DEV"
+
+
+def test_libfv_set_release_method_on_versiononly():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    assert len(fv.version_string_parts) == 1
+    fv.set_release_status()
+    assert len(fv.version_string_parts) == 2
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "RELEASE"
+
+
+def test_libfv_set_release_method_on_release(relfonts):
+    fv = FontVersion(relfonts)
+    prelength = len(fv.version_string_parts)
+    fv.set_release_status()
+    postlength = len(fv.version_string_parts)
+    assert prelength == postlength
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "RELEASE"
+
+
+def test_libfv_set_release_method_on_development(devfonts):
+    fv = FontVersion(devfonts)
+    prelength = len(fv.version_string_parts)
+    fv.set_release_status()
+    postlength = len(fv.version_string_parts)
+    assert prelength == postlength
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "RELEASE"
+
+
+def test_libfv_set_releaese_method_on_nostatus(metafonts):
+    fv = FontVersion(metafonts)
+    prelength = len(fv.version_string_parts)
+    fv.set_release_status()
+    postlength = len(fv.version_string_parts)
+    assert prelength == (postlength - 1)   # should add an additional substring to the version string here
+    assert fv.version_string_parts[0] == "Version 1.010"
+    assert fv.version_string_parts[1] == "RELEASE"
+
+
+def test_libfv_set_version_number(allfonts):
+    fv = FontVersion(allfonts)
+    prelength = len(fv.version_string_parts)
+    fv.set_version_number("2.000")
+    postlength = len(fv.version_string_parts)
+    assert prelength == postlength
+    assert fv.version_string_parts[0] == "Version 2.000"
+    assert fv.version == "Version 2.000"
+
+
+def test_libfv_set_version_string_one_substring():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv.set_version_string("Version 2.000")
+    assert len(fv.version_string_parts) == 1
+    assert fv.version_string_parts[0] == "Version 2.000"
+
+
+def test_libfv_set_version_string_two_substrings():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv.set_version_string("Version 2.000;DEV")
+    assert len(fv.version_string_parts) == 2
+    assert fv.version_string_parts[0] == "Version 2.000"
+    assert fv.version_string_parts[1] == "DEV"
+
+
+def test_libfv_set_version_string_three_substrings():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv.set_version_string("Version 2.000;DEV;other stuff")
+    assert len(fv.version_string_parts) == 3
+    assert fv.version_string_parts[0] == "Version 2.000"
+    assert fv.version_string_parts[1] == "DEV"
+    assert fv.version_string_parts[2] == "other stuff"
+
+
+def test_libfv_write_version_string_method(allfonts):
+    temp_out_file_path = os.path.join("tests", "testfiles", "Test-Temp.ttf")  # temp file write path
+    fv = FontVersion(allfonts)
+    fv.set_version_number("2.000")
+    fv.write_version_string(fontpath=temp_out_file_path)
+    fv2 = FontVersion(temp_out_file_path)
+    assert fv2.version_string_parts[0] == "Version 2.000"
+    # modify again to test write to same temp file path without use of the fontpath parameter in
+    # order to test the block of code where that is handled
+    fv2.set_version_number("3.000")
+    fv2.write_version_string()
+    fv3 = FontVersion(temp_out_file_path)
+    assert fv3.version_string_parts[0] == "Version 3.000"
+
+    os.remove(temp_out_file_path)
 
