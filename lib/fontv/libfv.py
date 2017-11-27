@@ -297,8 +297,3 @@ class FontVersion(object):
         else:
             self.ttf.save(fontpath)
 
-
-if __name__ == '__main__':
-    fv = FontVersion("../../tests/testfiles/Hack-Regular.ttf")
-    fv.set_git_commit_sha1(development=True)
-    print(fv.get_version_string())
