@@ -236,7 +236,7 @@ class FontVersion(object):
         """
         version_number_substring = "Version " + version_number
         self.version_string_parts[0] = version_number_substring
-        self.version = version_number_substring
+        self.version = self.version_string_parts[0]
 
     def set_version_string(self, version_string):
         """
@@ -269,7 +269,3 @@ class FontVersion(object):
             self.ttf.save(self.fontpath)
         else:
             self.ttf.save(fontpath)
-
-
-if __name__ == '__main__':
-    fv = FontVersion("/Users/ces/Desktop/Container/test/Hack-Regular.ttf")
