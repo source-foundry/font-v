@@ -83,9 +83,8 @@ class FontVersion(object):
         self.version = self.version_string_parts[0]
 
         # metadata parsing
-        if len(self.version_string_parts) > 1:
-            self._parse_metadata()         # parse the metadata
-            self._parse_status()           # parse the version substring dev/rel status indicator
+        self._parse_metadata()         # parse the metadata
+        self._parse_status()           # parse the version substring dev/rel status indicator
 
     def _parse_metadata(self):
         """
@@ -197,7 +196,7 @@ class FontVersion(object):
         else:
             # if the version string is defined as only a version number substring (i.e. list size = 1),
             # write the new substring to the list.  Nothing else required
-            self.version_string_parts[1] = self.develop_string
+            self.version_string_parts.append(self.develop_string)
 
         # update FontVersion truth testing properties based upon the new data
         self._parse_status()
