@@ -96,26 +96,47 @@ all_testfiles_list = [
     "tests/testfiles/Test-VersionShaDEV.ttf",
     "tests/testfiles/Test-VersionShaDEVMeta.ttf",
     "tests/testfiles/Test-VersionShaREL.ttf",
-    "tests/testfiles/Test-VersionShaRELMeta.ttf"
+    "tests/testfiles/Test-VersionShaRELMeta.ttf",
+    "tests/testfiles/Test-VersionDEV.otf",
+    "tests/testfiles/Test-VersionDEVMeta.otf",
+    "tests/testfiles/Test-VersionMeta.otf",
+    "tests/testfiles/Test-VersionMoreMeta.otf",
+    "tests/testfiles/Test-VersionOnly.otf",
+    "tests/testfiles/Test-VersionREL.otf",
+    "tests/testfiles/Test-VersionRELMeta.otf",
+    "tests/testfiles/Test-VersionShaDEV.otf",
+    "tests/testfiles/Test-VersionShaDEVMeta.otf",
+    "tests/testfiles/Test-VersionShaREL.otf",
+    "tests/testfiles/Test-VersionShaRELMeta.otf"
 ]
 
 meta_testfiles_list = [
     "tests/testfiles/Test-VersionMeta.ttf",
-    "tests/testfiles/Test-VersionMoreMeta.ttf"
+    "tests/testfiles/Test-VersionMoreMeta.ttf",
+    "tests/testfiles/Test-VersionMeta.otf",
+    "tests/testfiles/Test-VersionMoreMeta.otf"
 ]
 
 dev_testfiles_list = [
     "tests/testfiles/Test-VersionDEV.ttf",
     "tests/testfiles/Test-VersionDEVMeta.ttf",
     "tests/testfiles/Test-VersionShaDEV.ttf",
-    "tests/testfiles/Test-VersionShaDEVMeta.ttf"
+    "tests/testfiles/Test-VersionShaDEVMeta.ttf",
+    "tests/testfiles/Test-VersionDEV.otf",
+    "tests/testfiles/Test-VersionDEVMeta.otf",
+    "tests/testfiles/Test-VersionShaDEV.otf",
+    "tests/testfiles/Test-VersionShaDEVMeta.otf"
 ]
 
 rel_testfiles_list = [
     "tests/testfiles/Test-VersionREL.ttf",
     "tests/testfiles/Test-VersionRELMeta.ttf",
     "tests/testfiles/Test-VersionShaREL.ttf",
-    "tests/testfiles/Test-VersionShaRELMeta.ttf"
+    "tests/testfiles/Test-VersionShaRELMeta.ttf",
+    "tests/testfiles/Test-VersionREL.otf",
+    "tests/testfiles/Test-VersionRELMeta.otf",
+    "tests/testfiles/Test-VersionShaREL.otf",
+    "tests/testfiles/Test-VersionShaRELMeta.otf"
 ]
 
 # pytest fixtures for parametrized testing of various groupings of test files
@@ -182,10 +203,16 @@ def test_libfv_fontversion_object_parameter_properties_defaults(allfonts):
 
 def test_libfv_fontversion_object_properties_truth_defaults():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
     assert fv.contains_metadata is False
     assert fv.contains_status is False
     assert fv.is_development is False
     assert fv.is_release is False
+
+    assert fv2.contains_metadata is False
+    assert fv2.contains_status is False
+    assert fv2.is_development is False
+    assert fv2.is_release is False
 
 
 def test_libfv_fontversion_object_properties_truth_defaults_with_metaonly(metafonts):
@@ -214,8 +241,13 @@ def test_libfv_fontversion_object_properties_truth_release(relfonts):
 
 def test_libfv_fontversion_object_versionparts_meta_lists_versionstring_only():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+
     assert len(fv.version_string_parts) == 1
     assert len(fv.metadata) == 0
+
+    assert len(fv2.version_string_parts) == 1
+    assert len(fv2.metadata) == 0
 
 
 def test_libfv_fontversion_object_versionparts_meta_lists_version_with_onemeta():
@@ -225,6 +257,13 @@ def test_libfv_fontversion_object_versionparts_meta_lists_version_with_onemeta()
     assert fv.version_string_parts[1] == "metadata string"
     assert len(fv.metadata) == 1
     assert fv.metadata[0] == "metadata string"
+
+    fv2 = FontVersion("tests/testfiles/Test-VersionMeta.otf")
+    assert len(fv2.version_string_parts) == 2
+    assert fv2.version_string_parts[0] == "Version 1.010"
+    assert fv2.version_string_parts[1] == "metadata string"
+    assert len(fv2.metadata) == 1
+    assert fv2.metadata[0] == "metadata string"
 
 
 def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa():
@@ -236,6 +275,15 @@ def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa()
     assert len(fv.metadata) == 2
     assert fv.metadata[0] == "metadata string"
     assert fv.metadata[1] == "another metadata string"
+
+    fv2 = FontVersion("tests/testfiles/Test-VersionMoreMeta.otf")
+    assert len(fv2.version_string_parts) == 3
+    assert fv2.version_string_parts[0] == "Version 1.010"
+    assert fv2.version_string_parts[1] == "metadata string"
+    assert fv2.version_string_parts[2] == "another metadata string"
+    assert len(fv2.metadata) == 2
+    assert fv2.metadata[0] == "metadata string"
+    assert fv2.metadata[1] == "another metadata string"
 
 
 def test_libfv_clear_metadata_method(allfonts):
@@ -253,6 +301,13 @@ def test_libfv_get_version_string_method():
     assert fv2.get_version_string() == "Version 1.010;metadata string"
     assert fv3.get_version_string() == "Version 1.010;metadata string;another metadata string"
 
+    fv4 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+    fv5 = FontVersion("tests/testfiles/Test-VersionMeta.otf")
+    fv6 = FontVersion("tests/testfiles/Test-VersionMoreMeta.otf")
+    assert fv4.get_version_string() == "Version 1.010"
+    assert fv5.get_version_string() == "Version 1.010;metadata string"
+    assert fv6.get_version_string() == "Version 1.010;metadata string;another metadata string"
+
 
 def test_libfv_set_development_method_on_versiononly():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
@@ -265,6 +320,17 @@ def test_libfv_set_development_method_on_versiononly():
     assert fv.is_release is False
     assert fv.contains_status is True
     assert fv.contains_metadata is True
+
+    fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+    assert len(fv2.version_string_parts) == 1
+    fv2.set_development_status()
+    assert len(fv2.version_string_parts) == 2
+    assert fv2.version_string_parts[0] == "Version 1.010"
+    assert fv2.version_string_parts[1] == "DEV"
+    assert fv2.is_development is True
+    assert fv2.is_release is False
+    assert fv2.contains_status is True
+    assert fv2.contains_metadata is True
 
 
 def test_libfv_set_development_method_on_release(relfonts):
@@ -320,6 +386,17 @@ def test_libfv_set_release_method_on_versiononly():
     assert fv.is_release is True
     assert fv.contains_status is True
     assert fv.contains_metadata is True
+
+    fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+    assert len(fv2.version_string_parts) == 1
+    fv2.set_release_status()
+    assert len(fv2.version_string_parts) == 2
+    assert fv2.version_string_parts[0] == "Version 1.010"
+    assert fv2.version_string_parts[1] == "RELEASE"
+    assert fv2.is_development is False
+    assert fv2.is_release is True
+    assert fv2.contains_status is True
+    assert fv2.contains_metadata is True
 
 
 def test_libfv_set_release_method_on_release(relfonts):
@@ -413,6 +490,11 @@ def test_libfv_set_version_string_one_substring():
     assert len(fv.version_string_parts) == 1
     assert fv.version_string_parts[0] == "Version 2.000"
 
+    fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+    fv2.set_version_string("Version 2.000")
+    assert len(fv2.version_string_parts) == 1
+    assert fv2.version_string_parts[0] == "Version 2.000"
+
 
 def test_libfv_set_version_string_two_substrings():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
@@ -420,6 +502,12 @@ def test_libfv_set_version_string_two_substrings():
     assert len(fv.version_string_parts) == 2
     assert fv.version_string_parts[0] == "Version 2.000"
     assert fv.version_string_parts[1] == "DEV"
+
+    fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+    fv2.set_version_string("Version 2.000;DEV")
+    assert len(fv2.version_string_parts) == 2
+    assert fv2.version_string_parts[0] == "Version 2.000"
+    assert fv2.version_string_parts[1] == "DEV"
 
 
 def test_libfv_set_version_string_three_substrings():
@@ -429,6 +517,13 @@ def test_libfv_set_version_string_three_substrings():
     assert fv.version_string_parts[0] == "Version 2.000"
     assert fv.version_string_parts[1] == "DEV"
     assert fv.version_string_parts[2] == "other stuff"
+
+    fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+    fv2.set_version_string("Version 2.000;DEV;other stuff")
+    assert len(fv2.version_string_parts) == 3
+    assert fv2.version_string_parts[0] == "Version 2.000"
+    assert fv2.version_string_parts[1] == "DEV"
+    assert fv2.version_string_parts[2] == "other stuff"
 
 
 def test_libfv_write_version_string_method(allfonts):
