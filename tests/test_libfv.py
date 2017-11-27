@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 import os
 import os.path
+import re
 
 import pytest
 
@@ -138,6 +139,16 @@ def devfonts(request):
 @pytest.fixture(params=rel_testfiles_list)
 def relfonts(request):
     return request.param
+
+
+# testi
+def _test_hexadecimal_sha1_string_matches(needle):
+    p = re.compile("""[(a-f|0-9)]{7,10}""")
+    m = p.match(needle)
+    if m is None:
+        return False
+    else:
+        return True
 
 
 # TESTS
@@ -339,7 +350,7 @@ def test_libfv_set_release_method_on_development(devfonts):
     assert fv.contains_metadata is True
 
 
-def test_libfv_set_releaese_method_on_nostatus(metafonts):
+def test_libfv_set_release_method_on_nostatus(metafonts):
     fv = FontVersion(metafonts)
     prelength = len(fv.version_string_parts)
     fv.set_release_status()
@@ -351,6 +362,39 @@ def test_libfv_set_releaese_method_on_nostatus(metafonts):
     assert fv.is_release is True
     assert fv.contains_status is True
     assert fv.contains_metadata is True
+
+
+def test_libfv_set_gitsha1_bad_parameters_raises_valueerror(allfonts):
+    with pytest.raises(ValueError):
+        fv = FontVersion(allfonts)
+        fv.set_git_commit_sha1(development=True, release=True)
+
+
+def test_libfv_set_default_gitsha1_method(allfonts):
+    fv = FontVersion(allfonts)
+    fv.set_git_commit_sha1()
+    sha_needle = fv.version_string_parts[1]
+    assert _test_hexadecimal_sha1_string_matches(sha_needle) is True
+    assert ("-dev" in sha_needle) is False
+    assert ("-release" in sha_needle) is False
+
+
+def test_libfv_set_development_gitsha1_method(allfonts):
+    fv = FontVersion(allfonts)
+    fv.set_git_commit_sha1(development=True)
+    sha_needle = fv.version_string_parts[1]
+    assert _test_hexadecimal_sha1_string_matches(sha_needle) is True
+    assert ("-dev" in sha_needle) is True
+    assert ("-release" in sha_needle) is False
+
+
+def test_libfv_set_release_gitsha1_method(allfonts):
+    fv = FontVersion(allfonts)
+    fv.set_git_commit_sha1(release=True)
+    sha_needle = fv.version_string_parts[1]
+    assert _test_hexadecimal_sha1_string_matches(sha_needle) is True
+    assert ("-dev" in sha_needle) is False
+    assert ("-release" in sha_needle) is True
 
 
 def test_libfv_set_version_number(allfonts):
