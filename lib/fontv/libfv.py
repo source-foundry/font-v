@@ -190,7 +190,7 @@ class FontVersion(object):
                 # if the second item of the substring list is not a status string, save it and all subsequent list items
                 # then create a new list with inserted development string value
                 self.version_string_parts = [self.version_string_parts[0]]  # redefine list as list with version number
-                self.version_string_parts[1] = self.develop_string          # define the status substring as next item
+                self.version_string_parts.append(self.develop_string)       # define the status substring as next item
                 for item in self.metadata:  # iterate through all previous metadata substrings and append to list
                     self.version_string_parts.append(item)
         else:
@@ -216,13 +216,13 @@ class FontVersion(object):
                 # if the second item of the substring list is not a status string, save it and all subsequent list items
                 # then create a new list with inserted development string value
                 self.version_string_parts = [self.version_string_parts[0]]  # redefine list as list with version number
-                self.version_string_parts[1] = self.release_string          # define the status substring as next item
+                self.version_string_parts.append(self.release_string)       # define the status substring as next item
                 for item in self.metadata:  # iterate through all previous substrings and append to the list
                     self.version_string_parts.append(item)
         else:
             # if the version string is defined as only a version number substring (i.e. list size = 1),
             # write the new substring to the list.  Nothing else required
-            self.version_string_parts[1] = self.release_string
+            self.version_string_parts.append(self.release_string)
 
         # update FontVersion truth testing properties based upon the new data
         self._parse_status()
