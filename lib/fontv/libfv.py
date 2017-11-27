@@ -13,7 +13,13 @@
 
 from __future__ import unicode_literals
 
+import os
+
 from fontTools import ttLib
+from fontTools.misc.py23 import tounicode, unicode
+from git import Repo
+
+from fontv.utilities import get_git_root_path
 
 
 class FontVersion(object):
@@ -86,6 +92,17 @@ class FontVersion(object):
         self._parse_metadata()         # parse the metadata
         self._parse_status()           # parse the version substring dev/rel status indicator
 
+    def _get_repo_commit(self):
+        repo = Repo(get_git_root_path(self.fontpath))
+        gitpy = repo.git
+        # git rev-list --abbrev-commit --max-count=1 --format="%h" HEAD - abbreviated unique sha1 for the repository
+        # number of sha1 hex characters determined by git (addresses https://github.com/source-foundry/font-v/issues/2)
+        full_git_sha_string = gitpy.rev_list('--abbrev-commit', '--max-count=1', '--format="%h"', 'HEAD')
+        unicode_full_sha_string = tounicode(full_git_sha_string)
+        sha_string_list = unicode_full_sha_string.split(os.linesep)
+        final_sha_string = sha_string_list[1].replace('"', '')
+        return final_sha_string
+
     def _parse_metadata(self):
         """
         _parse_metadata is a private method that parses a font version string for semicolon delimited font version
@@ -140,6 +157,28 @@ class FontVersion(object):
         else:
             self.version_string_parts = [version_string]
 
+    def _set_status_indicator_string(self, status_string):
+        if len(self.version_string_parts) > 1:
+            teststring = self.version_string_parts[1]
+            if self._is_release_substring(teststring) or self._is_development_substring(teststring):
+                # directly replace when existing status substring
+                self.version_string_parts[1] = status_string
+            else:
+                # if the second item of the substring list is not a status string, save it and all subsequent list items
+                # then create a new list with inserted status string value
+                self.version_string_parts = [self.version_string_parts[0]]  # redefine list as list with version number
+                self.version_string_parts.append(status_string)       # define the status substring as next item
+                for item in self.metadata:  # iterate through all previous metadata substrings and append to list
+                    self.version_string_parts.append(item)
+        else:
+            # if the version string is defined as only a version number substring (i.e. list size = 1),
+            # write the new status substring to the list.  Nothing else required
+            self.version_string_parts.append(status_string)
+
+        # update FontVersion truth testing properties based upon the new data
+        self._parse_status()
+        self._parse_metadata()
+
     def _is_development_substring(self, needle):
         if self.develop_string == needle.strip() or self.sha1_develop in needle:
             return True
@@ -174,59 +213,47 @@ class FontVersion(object):
         return ";".join(self.version_string_parts)
 
     def set_git_commit_sha1(self, development=False, release=False):
-        pass
+        """
+        set_git_commit_sha1 is a public method that adds a git commit sha1 hash label to the font version string
+        at the second substring position.  This can be combined with a development/release status indicator as part
+        of the substring if the calling code defines either the development or release parameter to a value of True.
+        Note that development and release are mutually exclusive.  ValueError is raised if both are set to True.
+        :param development: (boolean) False (default) = do not add development status indicator; True = add indicator
+        :param release: (boolean) False (default) = do not add release status indicator; True = add indicator
+        :raises: IOError when the git repository root cannot be identified using the directory traversal in the
+                 fontv.utilities.get_git_root_path() function
+        :raises: ValueError when calling code sets both development and release parameters to True as these are
+                 mutually exclusive requests
+        :return: None
+        """
+        git_sha1_hash = self._get_repo_commit()
+
+        if development and release:
+            raise ValueError("Cannot set both development parameter and release parameter to a value of True in "
+                             "fontv.libfv.FontVersion.set_git_commit_sha1() method.  These are mutually exclusive.")
+
+        if development:   # if request for development status label, append FontVersion.sha1_develop to hash digest
+            hash_substring = git_sha1_hash + self.sha1_develop
+        elif release:     # if request for release status label, append FontVersion.sha1_release to hash digest
+            hash_substring = git_sha1_hash + self.sha1_release
+        else:             # else just use the hash digest
+            hash_substring = git_sha1_hash
+
+        self._set_status_indicator_string(hash_substring)
 
     def set_development_status(self):
         """
         set_development_status is a public method that sets the in memory development status label for the font
         :return: None
         """
-        if len(self.version_string_parts) > 1:
-            teststring = self.version_string_parts[1]
-            if self._is_release_substring(teststring) or self._is_development_substring(teststring):
-                # directly replace when existing status substring
-                self.version_string_parts[1] = self.develop_string
-            else:
-                # if the second item of the substring list is not a status string, save it and all subsequent list items
-                # then create a new list with inserted development string value
-                self.version_string_parts = [self.version_string_parts[0]]  # redefine list as list with version number
-                self.version_string_parts.append(self.develop_string)       # define the status substring as next item
-                for item in self.metadata:  # iterate through all previous metadata substrings and append to list
-                    self.version_string_parts.append(item)
-        else:
-            # if the version string is defined as only a version number substring (i.e. list size = 1),
-            # write the new substring to the list.  Nothing else required
-            self.version_string_parts.append(self.develop_string)
-
-        # update FontVersion truth testing properties based upon the new data
-        self._parse_status()
-        self._parse_metadata()
+        self._set_status_indicator_string(self.develop_string)
 
     def set_release_status(self):
         """
         set_release_status is a public method that sets the in memory release status label for the font.
         :return:
         """
-        if len(self.version_string_parts) > 1:
-            teststring = self.version_string_parts[1]
-            if self._is_release_substring(teststring) or self._is_development_substring(teststring):
-                # directly replace when existing status substring
-                self.version_string_parts[1] = self.release_string
-            else:
-                # if the second item of the substring list is not a status string, save it and all subsequent list items
-                # then create a new list with inserted development string value
-                self.version_string_parts = [self.version_string_parts[0]]  # redefine list as list with version number
-                self.version_string_parts.append(self.release_string)       # define the status substring as next item
-                for item in self.metadata:  # iterate through all previous substrings and append to the list
-                    self.version_string_parts.append(item)
-        else:
-            # if the version string is defined as only a version number substring (i.e. list size = 1),
-            # write the new substring to the list.  Nothing else required
-            self.version_string_parts.append(self.release_string)
-
-        # update FontVersion truth testing properties based upon the new data
-        self._parse_status()
-        self._parse_metadata()
+        self._set_status_indicator_string(self.release_string)
 
     def set_version_number(self, version_number):
         """
@@ -269,3 +296,9 @@ class FontVersion(object):
             self.ttf.save(self.fontpath)
         else:
             self.ttf.save(fontpath)
+
+
+if __name__ == '__main__':
+    fv = FontVersion("../../tests/testfiles/Hack-Regular.ttf")
+    fv.set_git_commit_sha1(development=True)
+    print(fv.get_version_string())
