@@ -40,7 +40,7 @@ def get_git_root_path(filepath):
 
     # check to see if this assumption is correct
     if dir_exists(os.path.join(unverified_gitroot_path, '.git')):
-        verified_gitroot_path = os.path.join(unverified_gitroot_path, '.git')
+        verified_gitroot_path = unverified_gitroot_path
     else:  # if not, recursive search up to three directories above for the git repo root
         one_level_up = os.path.abspath(os.path.join(unverified_gitroot_path, os.pardir))
         two_levels_up = os.path.dirname(one_level_up)
