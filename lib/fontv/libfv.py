@@ -104,6 +104,28 @@ class FontVersion(object):
         # object instantiation method calls
         self._read_version_string()  # read version string on fontpath at object instantiation
 
+    def __eq__(self, otherfont):
+        """
+        Equality comparison between FontVersion objects
+
+        :param otherfont: fontv.libfv.FontVersion object for comparison
+
+        :return: (boolean) True = versions are the same; False = versions are not the same
+        """
+        if type(otherfont) is type(self):
+            return self.version_string_parts == otherfont.version_string_parts
+        return False
+
+    def __ne__(self, otherfont):
+        """
+        Inequality comparison between FontVersion objects
+
+        :param otherfont: fontv.libfv.FontVersion object for comparison
+
+        :return: (boolean) True = versions differ; False = versions are the same
+        """
+        return not self.__eq__(otherfont)
+
     def _read_version_string(self):
         """
         _read_version_string is a private method that reads OpenType name table ID 5 data from otf and ttf fonts
