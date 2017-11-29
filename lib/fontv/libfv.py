@@ -13,8 +13,6 @@
 
 from __future__ import unicode_literals
 
-import os
-
 from fontTools import ttLib
 from fontTools.misc.py23 import tounicode, unicode
 from git import Repo
@@ -24,35 +22,67 @@ from fontv.utilities import get_git_root_path
 
 class FontVersion(object):
     """
-    FontVersion is a ttf and otf font version string object that maintains version string state in memory, parses
-    semicolon delimited parts of version strings included in binary files, and provides public methods for version
-    string reads/writes.
+    FontVersion is a ttf and otf font version string object that reads a font version string from a font binary,
+    maintains version string state in memory, parses semicolon delimited substrings of the version string, and
+    provides public methods for version string modification and writes back to the font file on disk.
+
+    :parameter fontpath: (string) file path to the font file
+
+    :parameter develop: (string) the string to use for development builds in the absence of git commit SHA1 string
+
+    :parameter release: (string) the string to use for release builds in the absence of a git commit SHA1 string
+
+    :parameter sha1_develop: (string) the string to append to the git SHA1 hash string for development builds
+
+    :parameter sha1_release: (string) the string to append to the git SHA1 hash string for release builds
+
     :raises: fontTools.ttLib.TTLibError if fontpath is not a ttf or otf font
+
     :raises: IOError if fontpath does not exist
     """
     def __init__(self, fontpath, develop="DEV", release="RELEASE", sha1_develop="-dev", sha1_release="-release"):
+        #: (string) The path to the font file
         self.fontpath = fontpath
+        #: (string) The string to use for development builds in the absence of git commit SHA1 string
         self.develop_string = develop
+        #: (string) The string to use for release builds in the absence of git commit SHA1 string
         self.release_string = release
+        #: (string) The string to append to the git SHA1 hash string for development builds
         self.sha1_develop = sha1_develop
+        #: (string) The string to append to the git SHA1 hash string for release builds
         self.sha1_release = sha1_release
 
-        # fonttools TTFont for font on self.fontpath
-        # raises IOError if filepath does not exist
-        # raises fontTools.ttLib.TTLibError if fontpath is not a ttf or otf font
+        #: fontTools.ttLib.TTFont for font on self.fontpath.
+        #: Raises IOError if filepath does not exist and
+        #: fontTools.ttLib.TTLibError if fontpath is not a ttf or otf font
         self.ttf = ttLib.TTFont(self.fontpath)
 
         # data containers
+        #: (dictionary) Private dictionary that contains {(record.platformID, record.platEncID, record.langID) :
+        #: name record ID 5 object } mapping
         self._nameID_5_dict = {}
+        #: (list) Public list that contains ordered parts of the version string. Items parsed from semicolon delimited
+        #: version strings.  This is used to maintain in memory version string state throughout execution of the script
         self.version_string_parts = []
+        #: (string) The version number substring formatted as "Version X.XXX"
         self.version = ""
+        #: (string) The development/release status string
         self.status = ""
+        #: (list) A list of metadata substrings in the version string.  Identical to self.version_string_parts[1:] if
+        #: there is more than one substring.  If there is a single substring (i.e. the version number substring) this
+        #: is an empty list
         self.metadata = []
 
         # truth test values for string contents
+        #: (boolean) boolean for presence of metadata in version string
         self.contains_metadata = False
+        #: (boolean) boolean for presence of development/release status substring in the version string
         self.contains_status = False
+        #: (boolean) boolean for presence of development status substring in the version string at
+        #: self.version_string_parts[1] index position
         self.is_development = False
+        #: (boolean) boolean for presence of release status substring in the version string at
+        #: self.version_string_parts[1] index position
         self.is_release = False
 
         # object instantiation methods
@@ -63,6 +93,7 @@ class FontVersion(object):
         _read_version_string is a private method that reads OpenType name table ID 5 data from otf and ttf fonts
         and sets FontVersion object properties.  The method is called on instantiation of a FontVersion
         object
+
         :return: None
         """
 
@@ -93,6 +124,12 @@ class FontVersion(object):
         self._parse_status()           # parse the version substring dev/rel status indicator
 
     def _get_repo_commit(self):
+        """
+        Private method that makes a system git call via the GitPython package and returns a short git commit
+        SHA1 hash string for the commit at HEAD using `git rev-list`.
+
+        :return: (string) short git commit SHA1 hash string
+        """
         repo = Repo(get_git_root_path(self.fontpath))
         gitpy = repo.git
         # git rev-list --abbrev-commit --max-count=1 --format="%h" HEAD - abbreviated unique sha1 for the repository
@@ -105,9 +142,10 @@ class FontVersion(object):
 
     def _parse_metadata(self):
         """
-        _parse_metadata is a private method that parses a font version string for semicolon delimited font version
+        Private method that parses a font version string for semicolon delimited font version
         string metadata.  Metadata are defined as anything beyond the first substring component of a version string
         that is defined to include the word 'Version' followed by the version number and semicolon
+
         :return: None
         """
         if len(self.version_string_parts) > 1:
@@ -121,9 +159,10 @@ class FontVersion(object):
 
     def _parse_status(self):
         """
-        _parse_status is a private method that parses a font version string to determine if it contains
+        Private method that parses a font version string to determine if it contains
         substring labels that indicate development/release status of the font based.  It is called
         by the _read_version_string method on FontVersion instantiation.
+
         :return: None
         """
         if len(self.version_string_parts) > 1:
@@ -151,6 +190,13 @@ class FontVersion(object):
             self.status = ""
 
     def _parse_version_substrings(self, version_string):
+        """
+        Private method that splits a full semicolon delimited version string on semicolon characters to a list
+
+        :param version_string: (string) the semicolon delimited version string to split
+
+        :return: (list) list of version substring items
+        """
         # split semicolon delimited list of version substrings
         if ";" in version_string:
             self.version_string_parts = version_string.split(";")
@@ -158,6 +204,14 @@ class FontVersion(object):
             self.version_string_parts = [version_string]
 
     def _set_status_indicator_string(self, status_string):
+        """
+        Private method that sets the status substring (defined as self.version_string_parts[1]) with a string value
+
+        :param status_string: (string) the string value to insert at the status substring position of the
+                               self.version_string_parts list
+
+        :return: None
+        """
         if len(self.version_string_parts) > 1:
             teststring = self.version_string_parts[1]
             if self._is_release_substring(teststring) or self._is_development_substring(teststring):
@@ -197,6 +251,7 @@ class FontVersion(object):
         version number substring as the only in memory component of the original (i.e. what was read from font binary)
         or modified (during execution of FontVersion methods or modification of object properties) version string.  The
         intent is to support removal of unnecessary version string data that is included in the font binary.
+
         :return: None
         """
         self.version_string_parts = [self.version_string_parts[0]]
@@ -208,6 +263,7 @@ class FontVersion(object):
         get_version_string is a public method that returns the full version string as the joined contents of the
         FontVersion.version_string_parts Python list.  It is joined with semicolon delimiters and returned as a
         Python 2 unicode object or Python 3 string object based upon the interpreter in use
+
         :return: string (Python 3) or unicode (Python 2)
         """
         return ";".join(self.version_string_parts)
@@ -218,12 +274,17 @@ class FontVersion(object):
         at the second substring position.  This can be combined with a development/release status indicator as part
         of the substring if the calling code defines either the development or release parameter to a value of True.
         Note that development and release are mutually exclusive.  ValueError is raised if both are set to True.
+
         :param development: (boolean) False (default) = do not add development status indicator; True = add indicator
+
         :param release: (boolean) False (default) = do not add release status indicator; True = add indicator
+
         :raises: IOError when the git repository root cannot be identified using the directory traversal in the
                  fontv.utilities.get_git_root_path() function
+
         :raises: ValueError when calling code sets both development and release parameters to True as these are
                  mutually exclusive requests
+
         :return: None
         """
         git_sha1_hash = self._get_repo_commit()
@@ -244,6 +305,7 @@ class FontVersion(object):
     def set_development_status(self):
         """
         set_development_status is a public method that sets the in memory development status label for the font
+
         :return: None
         """
         self._set_status_indicator_string(self.develop_string)
@@ -251,14 +313,17 @@ class FontVersion(object):
     def set_release_status(self):
         """
         set_release_status is a public method that sets the in memory release status label for the font.
-        :return:
+
+        :return: None
         """
         self._set_status_indicator_string(self.release_string)
 
     def set_version_number(self, version_number):
         """
         set_version_number is a public method that sets the version number substring with the version_number parameter
+
         :param version_number: (string) version number in X.XXX format where X are integers
+
         :return: None
         """
         version_number_substring = "Version " + version_number
@@ -270,7 +335,9 @@ class FontVersion(object):
         set_version_string is a public method that sets the full version string with a version_string parameter.
         This is parsed to component substring parts in a semicolon delimited fashion and the full string is maintained
         in the FontVersion.version_substring_parts Python list
+
         :param version_string: (string) The full semicolon delimited (if necessary) version string
+
         :return: None
         """
         self._parse_version_substrings(version_string)
@@ -282,7 +349,9 @@ class FontVersion(object):
         write_version_string is a public method that writes the in memory version substring parts as a joined, semicolon
         delimited string to the nameID 5 OpenType tables of the font file path that was set at FontVersion instantiation
         (default) or new fontpath if defined as parameter on method call.
+
         :param: fontpath (string): optional file path to write out modified font file
+
         :return: None
         """
         version_string = self.get_version_string()
