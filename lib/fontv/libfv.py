@@ -211,7 +211,7 @@ class FontVersion(object):
 
         :param version_string: (string) the semicolon delimited version string to split
 
-        :return: (list) list of version substring items
+        :return: None
         """
         # split semicolon delimited list of version substrings
         if ";" in version_string:
