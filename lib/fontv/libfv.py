@@ -4,7 +4,8 @@
 # ========================================================================================
 #
 #  libfv.py
-#   A Python library module that supports read/modification/write of font version strings
+#   A Python library module that supports read/modification/write of .otf and .ttf
+#   font version strings
 #
 #  Copyright 2017 Christopher Simpkins
 #  MIT License
@@ -26,7 +27,45 @@ class FontVersion(object):
     maintains version string state in memory, parses semicolon delimited substrings of the version string, and
     provides public methods for version string modification and writes back to the font file on disk.
 
-    :parameter fontpath: (string) file path to the font file
+    The class works on Python "strings".  String types indicated below refer to the Python2 unicode type and Python3
+    string type.
+
+    PUBLIC ATTRIBUTES:
+
+    contains_metadata: (boolean) boolean for presence of metadata in version string
+
+    contains_status: (boolean) boolean for presence of development/release status substring in the version string
+
+    develop_string: (string) The string to use for development builds in the absence of git commit SHA1 string
+
+    fontpath: (string) The path to the font file
+
+    is_development: (boolean) boolean for presence of development status substring at version_string_parts[1]
+
+    is_release: (boolean) boolean for presence of release status status substring at version_string_parts[1]
+
+    metadata: (list) A list of metadata substrings in the version string. Either version_string_parts[1:] or empty list
+
+    release_string: (string) The string to use for release builds in the absence of git commit SHA1 string
+
+    sha1_develop: (string) The string to append to the git SHA1 hash string for development builds
+
+    sha1_release: (string) The string to append to the git SHA1 hash string for release builds
+
+    status: (string) The development/release status string
+
+    ttf: (fontTools.ttLib.TTFont) for font file on fontpath file path
+
+    version_string_parts: (list) List that maintains in memory semicolon parsed substrings of font version string
+
+    version: (string) The version number substring formatted as "Version X.XXX"
+
+
+    PRIVATE ATTRIBUTES
+
+    _nameID_5_dict: (dictionary) {(platformID, platEncID,langID) : fontTools.ttLib.TTFont name record ID 5 object } map
+
+    :parameter fontpath: (string) file path to the .otf or .ttf font file
 
     :parameter develop: (string) the string to use for development builds in the absence of git commit SHA1 string
 
@@ -41,51 +80,28 @@ class FontVersion(object):
     :raises: IOError if fontpath does not exist
     """
     def __init__(self, fontpath, develop="DEV", release="RELEASE", sha1_develop="-dev", sha1_release="-release"):
-        #: (string) The path to the font file
         self.fontpath = fontpath
-        #: (string) The string to use for development builds in the absence of git commit SHA1 string
         self.develop_string = develop
-        #: (string) The string to use for release builds in the absence of git commit SHA1 string
         self.release_string = release
-        #: (string) The string to append to the git SHA1 hash string for development builds
         self.sha1_develop = sha1_develop
-        #: (string) The string to append to the git SHA1 hash string for release builds
         self.sha1_release = sha1_release
 
-        #: fontTools.ttLib.TTFont for font on self.fontpath.
-        #: Raises IOError if filepath does not exist and
-        #: fontTools.ttLib.TTLibError if fontpath is not a ttf or otf font
         self.ttf = ttLib.TTFont(self.fontpath)
 
-        # data containers
-        #: (dictionary) Private dictionary that contains {(record.platformID, record.platEncID, record.langID) :
-        #: name record ID 5 object } mapping
         self._nameID_5_dict = {}
-        #: (list) Public list that contains ordered parts of the version string. Items parsed from semicolon delimited
-        #: version strings.  This is used to maintain in memory version string state throughout execution of the script
+
         self.version_string_parts = []
-        #: (string) The version number substring formatted as "Version X.XXX"
         self.version = ""
-        #: (string) The development/release status string
         self.status = ""
-        #: (list) A list of metadata substrings in the version string.  Identical to self.version_string_parts[1:] if
-        #: there is more than one substring.  If there is a single substring (i.e. the version number substring) this
-        #: is an empty list
         self.metadata = []
 
         # truth test values for string contents
-        #: (boolean) boolean for presence of metadata in version string
         self.contains_metadata = False
-        #: (boolean) boolean for presence of development/release status substring in the version string
         self.contains_status = False
-        #: (boolean) boolean for presence of development status substring in the version string at
-        #: self.version_string_parts[1] index position
         self.is_development = False
-        #: (boolean) boolean for presence of release status substring in the version string at
-        #: self.version_string_parts[1] index position
         self.is_release = False
 
-        # object instantiation methods
+        # object instantiation method calls
         self._read_version_string()  # read version string on fontpath at object instantiation
 
     def _read_version_string(self):
