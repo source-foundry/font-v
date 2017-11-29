@@ -366,7 +366,7 @@ class FontVersion(object):
         delimited string to the nameID 5 OpenType tables of the font file path that was set at FontVersion instantiation
         (default) or new fontpath if defined as parameter on method call.
 
-        :param: fontpath (string): optional file path to write out modified font file
+        :param fontpath: (string) optional file path to write out modified font file
 
         :return: None
         """
