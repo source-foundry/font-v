@@ -54,7 +54,7 @@ class FontVersion(object):
 
     status: (string) The development/release status string
 
-    ttf: (fontTools.ttLib.TTFont) for font file 
+    ttf: (fontTools.ttLib.TTFont) for font file
 
     version_string_parts: (list) List that maintains in memory semicolon parsed substrings of font version string
 
@@ -76,6 +76,8 @@ class FontVersion(object):
     :parameter sha1_release: (string) the string to append to the git SHA1 hash string for release builds
 
     :raises: fontTools.ttLib.TTLibError if fontpath is not a ttf or otf font
+
+    :raises: IndexError if there are no nameID 5 records in the font name table
 
     :raises: IOError if fontpath does not exist
     """
@@ -150,13 +152,15 @@ class FontVersion(object):
                 recordkey = (record.platformID, record.platEncID, record.langID)
                 self._nameID_5_dict[recordkey] = record.toUnicode()
 
-        # begin parsing of the version string
-        if (3, 1, 1033) in self._nameID_5_dict:
-            version_string = self._nameID_5_dict[(3, 1, 1033)]
-        elif (1, 0, 0) in self._nameID_5_dict:
-            version_string = self._nameID_5_dict[(1, 0, 0)]
-        else:
-            version_string = ""  # TODO: raise exception?
+        # assert that at least one nameID 5 record was obtained from the font in order to instantiate
+        # a FontVersion object
+        if len(self._nameID_5_dict) == 0:
+            raise IndexError("Unable to read nameID 5 version records from the font " + self.fontpath)
+
+        # define the version string from the dictionary
+        for vs in self._nameID_5_dict.values():
+            version_string = vs
+            break  # take the first value that dictionary serves up
 
         # parse version string into substrings
         self._parse_version_substrings(version_string)
