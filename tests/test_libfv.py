@@ -172,7 +172,26 @@ def _test_hexadecimal_sha1_string_matches(needle):
         return True
 
 
+def _get_mock_missing_nameid5_ttfont(filepath):
+    ttf = TTFont(filepath)
+    record_list = []
+    for record in ttf['name'].names:
+        if record.nameID == 5:
+            pass
+        else:
+            record_list.append(record)
+    ttf['name'].names = record_list
+
+    return ttf
+
+
 # TESTS
+
+#
+#
+#   BEGIN FontVersion INSTANTIATION TESTS
+#
+#
 
 def test_libfv_missing_file_read_attempt():
     with pytest.raises(IOError):
@@ -182,6 +201,12 @@ def test_libfv_missing_file_read_attempt():
 def test_libfv_nonfont_file_read_attempt():
     with pytest.raises(TTLibError):
         fv = FontVersion("tests/testfiles/test.txt")
+
+
+def test_libfv_mocked_missing_name_tables_attempt():
+    with pytest.raises(IndexError):
+        ttf = _get_mock_missing_nameid5_ttfont("tests/testfiles/Test-VersionOnly.ttf")
+        fv = FontVersion(ttf)
 
 
 def test_libfv_fontversion_obj_instantiation_with_filepath_string(allfonts):
@@ -432,6 +457,27 @@ def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa_t
 #  BEGIN FontVersion METHOD TESTS
 #
 #
+
+def test_libfv_fontversion_object_equality(allfonts):
+    fv1 = FontVersion(allfonts)
+    fv2 = FontVersion(allfonts)
+    fv3 = FontVersion(allfonts)
+    fv3.version_string_parts[0] = "Version 12.000"
+    assert fv1 == fv2
+    assert (fv1 == fv3) is False
+    assert (fv1 == "test string") is False
+    assert (fv1 == fv1.version_string_parts) is False
+
+
+def test_libfv_fontversion_object_inequality(allfonts):
+    fv1 = FontVersion(allfonts)
+    fv2 = FontVersion(allfonts)
+    fv3 = FontVersion(allfonts)
+    fv3.version_string_parts[0] = "Version 12.000"
+    assert (fv1 != fv2) is False
+    assert fv1 != fv3
+    assert fv1 != "test string"
+    assert fv1 != fv1.version_string_parts
 
 
 def test_libfv_clear_metadata_method(allfonts):
