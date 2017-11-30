@@ -65,7 +65,7 @@ class FontVersion(object):
 
     _nameID_5_dict: (dictionary) {(platformID, platEncID,langID) : fontTools.ttLib.TTFont name record ID 5 object } map
 
-    :parameter fontpath: (string) file path to the .otf or .ttf font file
+    :parameter font: (string) file path to the .otf or .ttf font file OR (ttLib.TTFont) object for appropriate font file
 
     :parameter develop: (string) the string to use for development builds in the absence of git commit SHA1 string
 
@@ -79,14 +79,21 @@ class FontVersion(object):
 
     :raises: IOError if fontpath does not exist
     """
-    def __init__(self, fontpath, develop="DEV", release="RELEASE", sha1_develop="-dev", sha1_release="-release"):
-        self.fontpath = fontpath
+    def __init__(self, font, develop="DEV", release="RELEASE", sha1_develop="-dev", sha1_release="-release"):
+        try:
+            # assume that it is a ttLib.TTFont object and attempt to call object attributes
+            self.fontpath = font.reader.file.name
+            self.ttf = font     # if it does not raise AttributeError, we guessed correctly, can set the ttf attr here
+        except AttributeError:
+            # if above attempt to call TTFont attribute raises AttributeError (as it would with string file path)
+            # then instantiate a ttLib.TTFont object and define the fontpath attribute with the file path string
+            self.ttf = ttLib.TTFont(font)
+            self.fontpath = font
+
         self.develop_string = develop
         self.release_string = release
         self.sha1_develop = sha1_develop
         self.sha1_release = sha1_release
-
-        self.ttf = ttLib.TTFont(self.fontpath)
 
         self._nameID_5_dict = {}
 
