@@ -9,7 +9,7 @@ import re
 
 import pytest
 
-from fontTools.ttLib import TTLibError
+from fontTools.ttLib import TTFont, TTLibError
 
 from fontv.libfv import FontVersion
 
@@ -162,7 +162,7 @@ def relfonts(request):
     return request.param
 
 
-# testi
+# utilities for testing
 def _test_hexadecimal_sha1_string_matches(needle):
     p = re.compile("""[(a-f|0-9)]{7,10}""")
     m = p.match(needle)
@@ -184,12 +184,37 @@ def test_libfv_nonfont_file_read_attempt():
         fv = FontVersion("tests/testfiles/test.txt")
 
 
-def test_libfv_fontversion_obj_instantiation(allfonts):
+def test_libfv_fontversion_obj_instantiation_with_filepath_string(allfonts):
     fv = FontVersion(allfonts)
+
+
+def test_libfv_fontversion_obj_instantiation_with_ttfont_object(allfonts):
+    ttf = TTFont(allfonts)
+    fv1 = FontVersion(ttf)
+    fv2 = FontVersion(allfonts)
+    assert fv1.fontpath == fv2.fontpath
+    assert fv1.version_string_parts == fv2.version_string_parts
+    assert fv1.develop_string == fv2.develop_string
+    assert fv1.release_string == fv2.release_string
+    assert fv1.sha1_develop == fv2.sha1_develop
+    assert fv1.sha1_release == fv2.sha1_release
+    assert fv1.version == fv2.version
+    assert fv1.status == fv2.status
+    assert fv1.metadata == fv2.metadata
+    assert fv1.contains_status == fv2.contains_status
+    assert fv1.contains_metadata == fv2.contains_metadata
+    assert fv1.is_release == fv2.is_release
+    assert fv1.is_development == fv2.is_development
 
 
 def test_libfv_version_string_property_set_on_instantiation(allfonts):
     fv = FontVersion(allfonts)
+    assert fv.version == "Version 1.010"
+
+
+def test_libfv_version_string_property_set_on_instantiation_ttfont_object(allfonts):
+    ttf = TTFont(allfonts)
+    fv = FontVersion(ttf)
     assert fv.version == "Version 1.010"
 
 
@@ -201,13 +226,39 @@ def test_libfv_fontversion_object_parameter_properties_defaults(allfonts):
     assert fv.sha1_release == "-release"
 
 
+def test_libfv_fontversion_object_parameter_properties_defaults_ttfont_object(allfonts):
+    ttf = TTFont(allfonts)
+    fv = FontVersion(ttf)
+    assert fv.develop_string == "DEV"
+    assert fv.release_string == "RELEASE"
+    assert fv.sha1_develop == "-dev"
+    assert fv.sha1_release == "-release"
+
+
 def test_libfv_fontversion_object_properties_truth_defaults():
-    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv1 = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
     fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
-    assert fv.contains_metadata is False
-    assert fv.contains_status is False
-    assert fv.is_development is False
-    assert fv.is_release is False
+    assert fv1.contains_metadata is False
+    assert fv1.contains_status is False
+    assert fv1.is_development is False
+    assert fv1.is_release is False
+
+    assert fv2.contains_metadata is False
+    assert fv2.contains_status is False
+    assert fv2.is_development is False
+    assert fv2.is_release is False
+
+
+def test_libfv_fontversion_object_properties_truth_defaults_ttfont_object():
+    ttf1 = TTFont("tests/testfiles/Test-VersionOnly.ttf")
+    fv1 = FontVersion(ttf1)
+    ttf2 = TTFont("tests/testfiles/Test-VersionOnly.otf")
+    fv2 = FontVersion(ttf2)
+
+    assert fv1.contains_metadata is False
+    assert fv1.contains_status is False
+    assert fv1.is_development is False
+    assert fv1.is_release is False
 
     assert fv2.contains_metadata is False
     assert fv2.contains_status is False
@@ -223,8 +274,26 @@ def test_libfv_fontversion_object_properties_truth_defaults_with_metaonly(metafo
     assert fv.is_release is False
 
 
+def test_libfv_fontversion_object_properties_truth_defaults_with_metaonly_ttfont_object(metafonts):
+    ttf = TTFont(metafonts)
+    fv = FontVersion(ttf)
+    assert fv.contains_metadata is True
+    assert fv.contains_status is False
+    assert fv.is_development is False
+    assert fv.is_release is False
+
+
 def test_libfv_fontversion_object_properties_truth_development(devfonts):
     fv = FontVersion(devfonts)
+    assert fv.contains_metadata is True
+    assert fv.contains_status is True
+    assert fv.is_development is True
+    assert fv.is_release is False
+
+
+def test_libfv_fontversion_object_properties_truth_development_ttfont_object(devfonts):
+    ttf = TTFont(devfonts)
+    fv = FontVersion(ttf)
     assert fv.contains_metadata is True
     assert fv.contains_status is True
     assert fv.is_development is True
@@ -239,26 +308,68 @@ def test_libfv_fontversion_object_properties_truth_release(relfonts):
     assert fv.is_release is True
 
 
+def test_libfv_fontversion_object_properties_truth_release_ttfont_object(relfonts):
+    ttf = TTFont(relfonts)
+    fv = FontVersion(ttf)
+    assert fv.contains_metadata is True
+    assert fv.contains_status is True
+    assert fv.is_development is False
+    assert fv.is_release is True
+
+
 def test_libfv_fontversion_object_versionparts_meta_lists_versionstring_only():
-    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv1 = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
     fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
 
-    assert len(fv.version_string_parts) == 1
-    assert len(fv.metadata) == 0
+    assert len(fv1.version_string_parts) == 1
+    assert len(fv1.metadata) == 0
+
+    assert len(fv2.version_string_parts) == 1
+    assert len(fv2.metadata) == 0
+
+
+def test_libfv_fontversion_object_versionparts_meta_lists_versionstring_only_ttfont_object():
+    ttf1 = TTFont("tests/testfiles/Test-VersionOnly.ttf")
+    fv1 = FontVersion(ttf1)
+    ttf2 = TTFont("tests/testfiles/Test-VersionOnly.otf")
+    fv2 = FontVersion(ttf2)
+
+    assert len(fv1.version_string_parts) == 1
+    assert len(fv1.metadata) == 0
 
     assert len(fv2.version_string_parts) == 1
     assert len(fv2.metadata) == 0
 
 
 def test_libfv_fontversion_object_versionparts_meta_lists_version_with_onemeta():
-    fv = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
-    assert len(fv.version_string_parts) == 2
-    assert fv.version_string_parts[0] == "Version 1.010"
-    assert fv.version_string_parts[1] == "metadata string"
-    assert len(fv.metadata) == 1
-    assert fv.metadata[0] == "metadata string"
+    fv1 = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
+    assert len(fv1.version_string_parts) == 2
+    assert fv1.version_string_parts[0] == "Version 1.010"
+    assert fv1.version_string_parts[1] == "metadata string"
+    assert len(fv1.metadata) == 1
+    assert fv1.metadata[0] == "metadata string"
 
     fv2 = FontVersion("tests/testfiles/Test-VersionMeta.otf")
+    assert len(fv2.version_string_parts) == 2
+    assert fv2.version_string_parts[0] == "Version 1.010"
+    assert fv2.version_string_parts[1] == "metadata string"
+    assert len(fv2.metadata) == 1
+    assert fv2.metadata[0] == "metadata string"
+
+
+def test_libfv_fontversion_object_versionparts_meta_lists_version_with_onemeta_ttfont_object():
+    ttf1 = TTFont("tests/testfiles/Test-VersionMeta.ttf")
+
+    fv1 = FontVersion(ttf1)
+    assert len(fv1.version_string_parts) == 2
+    assert fv1.version_string_parts[0] == "Version 1.010"
+    assert fv1.version_string_parts[1] == "metadata string"
+    assert len(fv1.metadata) == 1
+    assert fv1.metadata[0] == "metadata string"
+
+    ttf2 = TTFont("tests/testfiles/Test-VersionMeta.otf")
+
+    fv2 = FontVersion(ttf2)
     assert len(fv2.version_string_parts) == 2
     assert fv2.version_string_parts[0] == "Version 1.010"
     assert fv2.version_string_parts[1] == "metadata string"
@@ -284,6 +395,43 @@ def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa()
     assert len(fv2.metadata) == 2
     assert fv2.metadata[0] == "metadata string"
     assert fv2.metadata[1] == "another metadata string"
+
+
+def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa_ttfont_object():
+    ttf1 = TTFont("tests/testfiles/Test-VersionMoreMeta.ttf")
+
+    fv1 = FontVersion(ttf1)
+    assert len(fv1.version_string_parts) == 3
+    assert fv1.version_string_parts[0] == "Version 1.010"
+    assert fv1.version_string_parts[1] == "metadata string"
+    assert fv1.version_string_parts[2] == "another metadata string"
+    assert len(fv1.metadata) == 2
+    assert fv1.metadata[0] == "metadata string"
+    assert fv1.metadata[1] == "another metadata string"
+
+    ttf2 = TTFont("tests/testfiles/Test-VersionMoreMeta.otf")
+
+    fv2 = FontVersion(ttf2)
+    assert len(fv2.version_string_parts) == 3
+    assert fv2.version_string_parts[0] == "Version 1.010"
+    assert fv2.version_string_parts[1] == "metadata string"
+    assert fv2.version_string_parts[2] == "another metadata string"
+    assert len(fv2.metadata) == 2
+    assert fv2.metadata[0] == "metadata string"
+    assert fv2.metadata[1] == "another metadata string"
+
+
+#
+#
+#   END FontVersion INSTANTIATION TESTS
+#
+#
+
+#
+#
+#  BEGIN FontVersion METHOD TESTS
+#
+#
 
 
 def test_libfv_clear_metadata_method(allfonts):
@@ -529,6 +677,24 @@ def test_libfv_set_version_string_three_substrings():
 def test_libfv_write_version_string_method(allfonts):
     temp_out_file_path = os.path.join("tests", "testfiles", "Test-Temp.ttf")  # temp file write path
     fv = FontVersion(allfonts)
+    fv.set_version_number("2.000")
+    fv.write_version_string(fontpath=temp_out_file_path)
+    fv2 = FontVersion(temp_out_file_path)
+    assert fv2.version_string_parts[0] == "Version 2.000"
+    # modify again to test write to same temp file path without use of the fontpath parameter in
+    # order to test the block of code where that is handled
+    fv2.set_version_number("3.000")
+    fv2.write_version_string()
+    fv3 = FontVersion(temp_out_file_path)
+    assert fv3.version_string_parts[0] == "Version 3.000"
+
+    os.remove(temp_out_file_path)
+
+
+def test_libfv_write_version_string_method_ttfont_object(allfonts):
+    temp_out_file_path = os.path.join("tests", "testfiles", "Test-Temp.ttf")  # temp file write path
+    ttf = TTFont(allfonts)
+    fv = FontVersion(ttf)
     fv.set_version_number("2.000")
     fv.write_version_string(fontpath=temp_out_file_path)
     fv2 = FontVersion(temp_out_file_path)
