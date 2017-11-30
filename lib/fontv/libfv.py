@@ -38,7 +38,7 @@ class FontVersion(object):
 
     develop_string: (string) The string to use for development builds in the absence of git commit SHA1 string
 
-    fontpath: (string) The path to the font file
+    font: (string) The path to the font file OR (fontTools.ttLib.TTFont) object that was instantiated with the font file
 
     is_development: (boolean) boolean for presence of development status substring at version_string_parts[1]
 
