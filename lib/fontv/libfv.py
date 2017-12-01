@@ -14,6 +14,8 @@
 
 from __future__ import unicode_literals
 
+import re
+
 from fontTools import ttLib
 from fontTools.misc.py23 import tounicode, unicode
 from git import Repo
@@ -134,6 +136,26 @@ class FontVersion(object):
         :return: (boolean) True = versions differ; False = versions are the same
         """
         return not self.__eq__(otherfont)
+
+    # TODO: confirm comparisons of version numbers like "Version 1.001", "Version 1.01", "Version 1.1" as not the same
+    # TODO:   before this is released.  Will need to be documented as such because this is not obvious behavior
+    # def __gt__(self, otherfont):
+    #     """
+    #
+    #     :param otherfont:
+    #
+    #     :return:
+    #     """
+    #     return self.get_version_number_tuple() > otherfont.get_version_number_tuple()
+    #
+    # def __lt__(self, otherfont):
+    #     """
+    #
+    #     :param otherfont:
+    #
+    #     :return:
+    #     """
+    #     return self.get_version_number_tuple() < otherfont.get_version_number_tuple()
 
     def _read_version_string(self):
         """
@@ -307,6 +329,28 @@ class FontVersion(object):
         self._parse_metadata()
         self._parse_status()
 
+    def get_version_number_tuple(self):
+        """
+
+
+        :return:
+        """
+        match = re.search(r"\d{1,3}\.\d{1,3}", self.version)
+        if match:
+            version_number_int_list = []
+
+            version_number_string = match.group(0)
+            version_number_list = version_number_string.split(".")
+            version_number_major_int = int(version_number_list[0])
+            version_number_int_list.append(version_number_major_int)  # add major version integer
+
+            for minor_int in version_number_list[1]:
+                version_number_int_list.append(int(minor_int))
+
+            return tuple(version_number_int_list)
+        else:
+            return None
+
     def get_version_string(self):
         """
         get_version_string is a public method that returns the full version string as the joined contents of the
@@ -316,6 +360,26 @@ class FontVersion(object):
         :return: string (Python 3) or unicode (Python 2)
         """
         return ";".join(self.version_string_parts)
+
+    def get_metadata_list(self):
+        """
+        get_metadata_list is a public method that returns a Python list containing metadata substring items generated
+        by splitting the string on a semicolon delimiter.  Metadata are defined as all data in the font version string
+        following the first semicolon.  The version number string (i.e. "Version X.XXX") is not present in this list.
+
+        :return: list of string (Python 3) or list of unicode (Python 2)
+        """
+        return self.metadata
+
+    def get_status_substring(self):
+        """
+        get_status_substring is a public method that returns the status substring at position 2 of the semicolon
+        delimited version string.  This substring can include any of the following labels:
+        "DEV", "RELEASE", "[sha1]-dev", "[sha1]-release"
+
+        :return: string (Python 3) or unicode (Python 2), empty string if this substring is not set in the font
+        """
+        return self.status
 
     def set_git_commit_sha1(self, development=False, release=False):
         """

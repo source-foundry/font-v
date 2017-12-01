@@ -487,6 +487,61 @@ def test_libfv_clear_metadata_method(allfonts):
     assert fv.version_string_parts[0] == "Version 1.010"
 
 
+def test_libfv_get_metadata_method():
+    fv1 = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv2 = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
+    fv3 = FontVersion("tests/testfiles/Test-VersionMoreMeta.ttf")
+    assert fv1.get_metadata_list() == []
+    assert fv2.get_metadata_list() == ["metadata string"]
+    assert fv3.get_metadata_list() == ["metadata string", "another metadata string"]
+
+    fv4 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+    fv5 = FontVersion("tests/testfiles/Test-VersionMeta.otf")
+    fv6 = FontVersion("tests/testfiles/Test-VersionMoreMeta.otf")
+    assert fv4.get_metadata_list() == []
+    assert fv5.get_metadata_list() == ["metadata string"]
+    assert fv6.get_metadata_list() == ["metadata string", "another metadata string"]
+
+
+def test_libfv_get_status_method_development(devfonts):
+    fv = FontVersion(devfonts)
+    status_string = fv.get_status_substring()
+    assert status_string == fv.version_string_parts[1]
+
+
+def test_libfv_get_status_method_release(relfonts):
+    fv = FontVersion(relfonts)
+    status_string = fv.get_status_substring()
+    assert status_string == fv.version_string_parts[1]
+
+
+def test_libfv_get_status_method_nostatus(metafonts):
+    fv = FontVersion(metafonts)
+    status_string = fv.get_status_substring()
+    assert status_string == ""
+
+
+def test_get_version_number_tuple():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    assert fv.get_version_number_tuple() == (1, 0, 1, 0)
+
+    # mock new version numbers in memory and confirm that they are correct in tuples
+    fv.version = "Version 1.1"
+    assert fv.get_version_number_tuple() == (1, 1)
+    fv.version = "Version 1.01"
+    assert fv.get_version_number_tuple() == (1, 0, 1)
+    fv.version = "Version 1.001"
+    assert fv.get_version_number_tuple() == (1, 0, 0, 1)
+    fv.version = "Version 10.1"
+    assert fv.get_version_number_tuple() == (10, 1)
+    fv.version = "Version 10.01"
+    assert fv.get_version_number_tuple() == (10, 0, 1)
+    fv.version = "Version 10.001"
+    assert fv.get_version_number_tuple() == (10, 0, 0, 1)
+    fv.version = "Version 100.001"
+    assert fv.get_version_number_tuple() == (100, 0, 0, 1)
+
+
 def test_libfv_get_version_string_method():
     fv1 = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
     fv2 = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
