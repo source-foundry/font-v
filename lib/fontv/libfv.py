@@ -305,12 +305,28 @@ class FontVersion(object):
         self._parse_metadata()
 
     def _is_development_substring(self, needle):
+        """
+        _is_development_substring is a private method that returns a boolean that indicates whether
+        the needle string meets the font-v definition of a development status string
+
+        :param needle: (string) test string
+
+        :return: boolean True = is development substring and False = is not a development substring
+        """
         if self.develop_string == needle.strip() or self.sha1_develop in needle:
             return True
         else:
             return False
 
     def _is_release_substring(self, needle):
+        """
+        _is_release_substring is a private method that returns a boolean that indicates whether
+        the needle string meets the font-v definition of a development status string
+
+        :param needle: (string) test string
+
+        :return: boolean True = is release substring and False = is not a release substring
+        """
         if self.release_string == needle.strip() or self.sha1_release in needle:
             return True
         else:
@@ -331,9 +347,11 @@ class FontVersion(object):
 
     def get_version_number_tuple(self):
         """
+        get_version_number_tuple is a public method that returns a tuple of integer values with the following
+        definition: ( major version, minor version position 1, minor version position 2, minor version
+        position 3) where position is the decimal position of the integer in the minor version string
 
-
-        :return:
+        :return: tuple of integers
         """
         match = re.search(r"\d{1,3}\.\d{1,3}", self.version)
         if match:
