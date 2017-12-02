@@ -1,5 +1,11 @@
 ## Changelog
 
+### v0.4.0
+
+- new: `libfv` library that exposes public FontVersion class for work with font version strings
+- bugfix: `font-v` git commit SHA1 parsing error on Windows platform
+- changed: refactored commandlines library to this project (from external dependency)
+
 ### v0.3.3
 
 - added modified version string notification to standard output stream on new version writes (#13)
