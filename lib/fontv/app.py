@@ -11,13 +11,13 @@ from __future__ import unicode_literals
 import os
 import sys
 
-from commandlines import Command
 from fontTools import ttLib
 from fontTools.misc.py23 import tounicode, unicode
 from fontTools.misc.encodingTools import getEncoding
 from git import Repo
 
 from fontv import settings
+from fontv.commandlines import Command
 from fontv.utilities import file_exists, dir_exists
 
 

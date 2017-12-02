@@ -39,7 +39,7 @@ setup(
     platforms=['any'],
     packages=find_packages("lib"),
     package_dir={'': 'lib'},
-    install_requires=['commandlines', 'gitpython', 'fonttools'],
+    install_requires=['gitpython', 'fonttools'],
     entry_points={
         'console_scripts': [
             'font-v = fontv.app:main'
