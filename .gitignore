@@ -69,3 +69,4 @@ tests/profiler.py
 
 # OS X
 .DS_Store
+scratchpad.py
