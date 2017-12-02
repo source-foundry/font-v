@@ -187,7 +187,7 @@ Note that all modifications to the version string are made in memory. File write
 
 ### What You Can Do with the `FontVersion` Object
 
-#### Read/Write Version String
+#### Read/Write version string
 
 As you make changes to the font version string, you can examine the full version string in memory with the following:
 
@@ -200,7 +200,7 @@ vs = fv.get_version_string()
 
 All modifications with the public methods are made in memory.  When you are ready to write them out to a font file, call the following method:
 
-##### Write Version String Modifications to Font File
+##### Write version string modifications to font file
 
 ```python
 fv = FontVersion("path/to/font")
@@ -211,7 +211,7 @@ fv.write_version_string(fontpath="path/to/difffont") # writes to a different fil
 
 #### Compare Version Strings
 
-##### Test Version Equality / Inequality
+##### Test version equality / inequality
 
 ```python
 fv1 = FontVersion("path/to/font1")
@@ -239,7 +239,7 @@ fv = FontVersion("path/to/font")
 fv.set_version_string("Version 2.015; my metadata; more metadata")
 ```
 
-##### Work with Major/Minor Version Number Integers
+##### Work with major/minor version number integers
 
 ```python
 fv = FontVersion("path/to/font")
@@ -254,7 +254,7 @@ print(vno2)
 >>> (10, 2, 3, 4)
 ```
 
-##### Eliminate Metadata from a Version String
+##### Eliminate metadata from a version string
 
 ```python
 fv = FontVersion("path/to/font")
@@ -263,7 +263,7 @@ fv.clear_metadata()
 # post modification version string = "Version 1.000"
 ```
 
-##### Set Development/Release Status of the Font Build
+##### Set development/release status of the font build
 
 ```python
 fv = FontVersion("path/to/font")
@@ -275,7 +275,7 @@ fv.set_development_status()
 fv.set_release_status()
 ```
 
-##### Set git Commit SHA1 Hash Label to Maintain Documentation of Source State at Build
+##### Set git commit SHA1 hash label to maintain documentation of build time source state
 
 ```python
 fv = FontVersion("path/to/font")
@@ -295,6 +295,10 @@ fv.set_git_commit_sha1(release=True)
 
 Full documentation of the `libfv` API is available at http://font-v.readthedocs.io/
 
+
+## Contributing to font-v
+
+Source contributions are highly encouraged and welcomed!  Please see the [CONTRIBUTING.md](CONTRIBUTING.md) documentation for details.
 
 
 ## Acknowledgments
