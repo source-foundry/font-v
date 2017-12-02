@@ -1,9 +1,11 @@
 font-v
 ========
 
-A font version reporting and modification tool.  font-v reports and modifies the OpenType name table nameID 5 records in ttf and otf fonts.
+The font-v executable and the libfv library support reads, reporting, modification, and writes of OpenType name table nameID 5 (version string) records in .ttf and .otf fonts.
 
 Source and documentation: https://github.com/source-foundry/font-v
+
+libfv API documentation: https://font-v.readthedocs.io/en/latest/
 
 Issue reporting: https://github.com/source-foundry/font-v/issues
 

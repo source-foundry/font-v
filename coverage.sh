@@ -1,6 +1,6 @@
 #!/bin/sh
 
-coverage run --source font-v -m py.test
+coverage run --source fontv -m py.test
 coverage report -m
 coverage html
 
