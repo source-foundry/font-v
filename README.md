@@ -154,7 +154,7 @@ Any data that followed the original version string are maintained and appended a
 
 ## libfv Usage
 
-The libfv Python library exposes the `FontVersion` object and associated set of attributes and public methods for reads, modifications, and writes of font version strings in your Python source code.
+The libfv Python library exposes the `FontVersion` object along with an associated set of attributes and public methods for reads, modifications, and writes of `.otf` and `.ttf` font version strings.
 
 ### Import Library into Your Project
 
@@ -164,7 +164,7 @@ To use the libfv library, import the `FontVersion` class into your Python script
 from fontv.libfv import FontVersion
 ```
 
-### Create an Instance of the FontVersion Class
+### Create an Instance of the `FontVersion` Class
 
 Next, create an instance of the `FontVersion` class with one of the following approaches:
 
@@ -185,7 +185,7 @@ The libfv library will automate parsing of the version string to a set of public
 
 Note that all modifications to the version string are made in memory. File writes with these modified data occur when the calling code explicitly calls a write method.
 
-### What You Can Do with the File Version Object
+### What You Can Do with the `FontVersion` Object
 
 #### Read/Write Version String
 
