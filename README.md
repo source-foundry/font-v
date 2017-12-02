@@ -11,9 +11,9 @@ font-v is built with Python and can be used on Linux, OS X, and Windows platform
 
 ## Contents
 - [Installation](#installation)
-- [font-v Executable Usage](#)
-- [libfv Usage](#)
-- [libfv API documentation](https://font-v.rtfd.io/)
+- [font-v Executable Usage](#font-v-executable-usage)
+- [libfv Library Usage](https://github.com/source-foundry/font-v/tree/dev#libfv-usage)
+- [libfv Library API documentation](https://font-v.rtfd.io/)
 
 ## Installation
 
