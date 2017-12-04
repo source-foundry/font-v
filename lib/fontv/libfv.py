@@ -14,6 +14,7 @@
 
 from __future__ import unicode_literals
 
+import os
 import re
 
 from fontTools import ttLib
@@ -136,6 +137,15 @@ class FontVersion(object):
         :return: (boolean) True = versions differ; False = versions are the same
         """
         return not self.__eq__(otherfont)
+
+    def __str__(self):
+        """
+        Human readable string formatting
+
+        :return: (string)
+        """
+        return "<fontv.libfv.FontVersion> " + self.get_version_string()
+
 
     # TODO: confirm comparisons of version numbers like "Version 1.001", "Version 1.01", "Version 1.1" as not the same
     # TODO:   before this is released.  Will need to be documented as such because this is not obvious behavior
