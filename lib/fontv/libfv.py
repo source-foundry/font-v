@@ -144,8 +144,8 @@ class FontVersion(object):
 
         :return: (string)
         """
-        return "<fontv.libfv.FontVersion> " + self.get_version_string()
-
+        return "<fontv.libfv.FontVersion> " + os.linesep + self.get_version_string() + os.linesep + "file path:" \
+               " " + self.fontpath
 
     # TODO: confirm comparisons of version numbers like "Version 1.001", "Version 1.01", "Version 1.1" as not the same
     # TODO:   before this is released.  Will need to be documented as such because this is not obvious behavior
