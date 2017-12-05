@@ -458,6 +458,14 @@ def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa_t
 #
 #
 
+def test_libfv_fontversion_object_str_method(allfonts):
+    fv = FontVersion(allfonts)
+    test_string = fv.__str__()
+    assert test_string.startswith("<fontv.libfv.FontVersion> ") is True
+    assert fv.get_version_string() in test_string
+    assert fv.fontpath in test_string
+
+
 def test_libfv_fontversion_object_equality(allfonts):
     fv1 = FontVersion(allfonts)
     fv2 = FontVersion(allfonts)
