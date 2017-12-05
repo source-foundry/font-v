@@ -30,7 +30,7 @@ def file_exists(filepath):
 def get_git_root_path(filepath):
     """
     Recursively searches for git root path over 4 directory levels above working directory
-    :param: filepath (string) - path to the font file that is under git version control
+    :param filepath: (string) - path to the font file that is under git version control
     :return: validated git root path as string
     :raises: IOError if unable to detect the root of the git repository through this path traversal
     """
@@ -63,6 +63,13 @@ def get_git_root_path(filepath):
 
 
 def is_font(filepath):
+    """
+    Tests filepath argument to determine if it has a .ttf or .otf file extension (definition of "font" for this
+    application)
+
+    :param filepath: (string) file path to a font file for testing
+    :return: (boolean) True = appears to be a font file path; False = does not appear to be a font file path
+    """
     if len(filepath) > 4:
         if filepath[-4:].lower() == ".ttf" or filepath[-4:].lower() == ".otf":
             return True
