@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ====================================================
+# ===============================================================
+# font-v
+#  A font version string editing tool built on the libfv library
+#
 # Copyright 2017 Christopher Simpkins
 # MIT License
-# ====================================================
+# ===============================================================
 
 from __future__ import unicode_literals
 
@@ -18,7 +21,8 @@ from git import Repo
 
 from fontv import settings
 from fontv.commandlines import Command
-from fontv.utilities import file_exists, dir_exists
+from fontv.libfv import FontVersion
+from fontv.utilities import file_exists, dir_exists, is_font
 
 
 def main():
@@ -47,19 +51,16 @@ def main():
             sys.exit(1)
 
         for arg in c.argv[1:]:
-            if arg[-4:].lower() == ".ttf" or arg[-4:].lower() == ".otf":
+            if is_font(arg):
                 font_path = arg
                 if file_exists(font_path):
-                    tt = ttLib.TTFont(font_path)
-                    namerecord_list = tt['name'].names
-                    for record in namerecord_list:
-                        if record.nameID == 5:
-                            fobj = FontVersionObj(font_path, record)
-                            if "--dev" in c.argv:   # --dev flag prints every version string in name records
-                                print(fobj.get_dev_print_string())
-                            else:
-                                print(fobj.get_print_string())
-                                break  # print a single version string if there are multiple name records by default
+                    fv = FontVersion(font_path)
+                    if "--dev" in c.argv:   # --dev switch report prints every version string in name records
+                        for key, value in fv._nameID_5_dict.items():
+                            devstring = fv.fontpath + " " + str(key) + ":" + os.linesep + fv.get_version_string()
+                            print(devstring)
+                    else:  # default report handling
+                        print(fv.fontpath + ":" + os.linesep + fv.get_version_string())
                 else:
                     print("[font-v] ERROR: " + font_path + " does not appear to be a valid ttf or otf font file path.")
                     sys.exit(1)
