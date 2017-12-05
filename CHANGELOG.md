@@ -1,5 +1,12 @@
 ## Changelog
 
+### v0.4.1
+
+- Added `__str__` method to libfv.FontVersion class for informative human readable data on prints
+- Added `is_font` function to utilities module
+- Refactored `font-v report` subcommand on the new libfv library
+- Removed encoding from the `font-v report --dev` report
+
 ### v0.4.0
 
 - new: `libfv` library that exposes public FontVersion class for work with font version strings
