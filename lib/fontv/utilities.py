@@ -60,3 +60,13 @@ def get_git_root_path(filepath):
             raise IOError("Unable to determine git repository root for font file " + filepath)
 
     return verified_gitroot_path
+
+
+def is_font(filepath):
+    if len(filepath) > 4:
+        if filepath[-4:].lower() == ".ttf" or filepath[-4:].lower() == ".otf":
+            return True
+        else:
+            return False
+    else:
+        return False
