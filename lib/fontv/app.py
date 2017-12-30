@@ -98,7 +98,8 @@ def main():
                 add_new_version = True
                 version_list = arg.split("=")  # split on the = symbol and use second part as definition
                 if len(version_list) < 2:
-                    sys.stderr.write("[font-v] ERROR: --arg=version argument is not properly specified." + os.linesep)
+                    sys.stderr.write("[font-v] ERROR: --ver=version argument does not have a valid definition"
+                                     " in your command." + os.linesep)
                     sys.exit(1)
                 # use fonttools library to cast terminal input from user to fontTools.misc.py23.unicode type (imported)
                 # this will be Python 3 str object and Python 2 unicode object

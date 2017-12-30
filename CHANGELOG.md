@@ -2,7 +2,8 @@
 
 # v0.5.0
 
-- Changed invalid ttf/otf file error to std error stream from std output stream
+- changed invalid ttf/otf file error to std error stream from std output stream
+- fixed incorrect option argument string displayed in the error message for `write` with undefined `--ver=` argument
 
 ### v0.4.1
 
