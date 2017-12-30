@@ -1,5 +1,9 @@
 ## Changelog
 
+# v0.5.0
+
+- Changed invalid ttf/otf file error to std error stream from std output stream
+
 ### v0.4.1
 
 - Added `__str__` method to libfv.FontVersion class for informative human readable data on prints

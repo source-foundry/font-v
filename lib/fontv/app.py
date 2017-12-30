@@ -62,7 +62,8 @@ def main():
                     else:  # default report handling
                         print(fv.fontpath + ":" + os.linesep + fv.get_version_string())
                 else:
-                    print("[font-v] ERROR: " + font_path + " does not appear to be a valid ttf or otf font file path.")
+                    sys.stderr.write("[font-v] ERROR: " + font_path + " does not appear to be a valid ttf "
+                                                                      "or otf font file path." + os.linesep)
                     sys.exit(1)
     elif c.subcmd == "write":
         # argument test
