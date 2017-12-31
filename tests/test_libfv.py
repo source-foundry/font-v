@@ -25,10 +25,16 @@ from fontv.libfv import FontVersion
 # fv.version_string_parts = ["Version 1.010", "RELEASE"]
 # fv.write_version_string(fontpath="testfiles/Test-VersionREL.ttf")
 #
-# fv.version_string_parts = ["Version 1.010", "abcd123-dev"]
+# fv.version_string_parts = ["Version 1.010", "[abcd123]"]
+# fv.write_version_string(fontpath="testfiles/Test-VersionSha.ttf")
+#
+# fv.version_string_parts = ["Version 1.010", "[abcd123]", "metadata string"]
+# fv.write_version_string(fontpath="testfiles/Test-VersionShaMeta.ttf")
+#
+# fv.version_string_parts = ["Version 1.010", "[abcd123]-dev"]
 # fv.write_version_string(fontpath="testfiles/Test-VersionShaDEV.ttf")
 #
-# fv.version_string_parts = ["Version 1.010", "abcd123-release"]
+# fv.version_string_parts = ["Version 1.010", "[abcd123]-release"]
 # fv.write_version_string(fontpath="testfiles/Test-VersionShaREL.ttf")
 #
 # fv.version_string_parts = ["Version 1.010", "metadata string"]
@@ -43,14 +49,14 @@ from fontv.libfv import FontVersion
 # fv.version_string_parts = ["Version 1.010", "RELEASE", "metadata string"]
 # fv.write_version_string(fontpath="testfiles/Test-VersionRELMeta.ttf")
 #
-# fv.version_string_parts = ["Version 1.010", "abcd123-dev", "metadata string"]
+# fv.version_string_parts = ["Version 1.010", "[abcd123]-dev", "metadata string"]
 # fv.write_version_string(fontpath="testfiles/Test-VersionShaDEVMeta.ttf")
 #
-# fv.version_string_parts = ["Version 1.010", "abcd123-release", "metadata string"]
+# fv.version_string_parts = ["Version 1.010", "[abcd123]-release", "metadata string"]
 # fv.write_version_string(fontpath="testfiles/Test-VersionShaRELMeta.ttf")
 
 
-# Test file version strings
+# Test file version strings (ttf shown, otf with same paths include the same version strings)
 
 # Test-VersionDEV.ttf:
 # Version 1.010;DEV
@@ -73,17 +79,23 @@ from fontv.libfv import FontVersion
 # Test-VersionRELMeta.ttf:
 # Version 1.010;RELEASE;metadata string
 
+# Test-VersionSha.ttf:
+# Version 1.010;[abcd123]
+
+# Test-VersionShaMeta.ttf:
+# Version 1.010;[abcd123];metadata string
+
 # Test-VersionShaDEV.ttf:
-# Version 1.010;abcd123-dev
+# Version 1.010;[abcd123]-dev
 
 # Test-VersionShaDEVMeta.ttf:
-# Version 1.010;abcd123-dev;metadata string
+# Version 1.010;[abcd123]-dev;metadata string
 
 # Test-VersionShaREL.ttf:
-# Version 1.010;abcd123-release
+# Version 1.010;[abcd123]-release
 
 # Test-VersionShaRELMeta.ttf:
-# Version 1.010;abcd123-release;metadata string
+# Version 1.010;[abcd123]-release;metadata string
 
 all_testfiles_list = [
     "tests/testfiles/Test-VersionDEV.ttf",
@@ -93,6 +105,8 @@ all_testfiles_list = [
     "tests/testfiles/Test-VersionOnly.ttf",
     "tests/testfiles/Test-VersionREL.ttf",
     "tests/testfiles/Test-VersionRELMeta.ttf",
+    "tests/testfiles/Test-VersionSha.ttf",
+    "tests/testfiles/Test-VersionShaMeta.ttf",
     "tests/testfiles/Test-VersionShaDEV.ttf",
     "tests/testfiles/Test-VersionShaDEVMeta.ttf",
     "tests/testfiles/Test-VersionShaREL.ttf",
@@ -104,6 +118,8 @@ all_testfiles_list = [
     "tests/testfiles/Test-VersionOnly.otf",
     "tests/testfiles/Test-VersionREL.otf",
     "tests/testfiles/Test-VersionRELMeta.otf",
+    "tests/testfiles/Test-VersionSha.otf",
+    "tests/testfiles/Test-VersionShaMeta.otf",
     "tests/testfiles/Test-VersionShaDEV.otf",
     "tests/testfiles/Test-VersionShaDEVMeta.otf",
     "tests/testfiles/Test-VersionShaREL.otf",
@@ -139,6 +155,21 @@ rel_testfiles_list = [
     "tests/testfiles/Test-VersionShaRELMeta.otf"
 ]
 
+state_testfiles_list = [
+    "tests/testfiles/Test-VersionSha.ttf",
+    "tests/testfiles/Test-VersionShaMeta.ttf",
+    "tests/testfiles/Test-VersionShaDEV.ttf",
+    "tests/testfiles/Test-VersionShaREL.ttf",
+    "tests/testfiles/Test-VersionShaDEVMeta.ttf",
+    "tests/testfiles/Test-VersionShaRELMeta.ttf",
+    "tests/testfiles/Test-VersionSha.otf",
+    "tests/testfiles/Test-VersionShaMeta.otf",
+    "tests/testfiles/Test-VersionShaDEV.otf",
+    "tests/testfiles/Test-VersionShaREL.otf",
+    "tests/testfiles/Test-VersionShaDEVMeta.otf",
+    "tests/testfiles/Test-VersionShaRELMeta.otf"
+]
+
 # pytest fixtures for parametrized testing of various groupings of test files
 
 
@@ -159,6 +190,11 @@ def devfonts(request):
 
 @pytest.fixture(params=rel_testfiles_list)
 def relfonts(request):
+    return request.param
+
+
+@pytest.fixture(params=state_testfiles_list)
+def statefonts(request):
     return request.param
 
 
