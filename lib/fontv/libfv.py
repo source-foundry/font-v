@@ -59,8 +59,6 @@ class FontVersion(object):
 
     state: (string) The state metadata substring
 
-    status: (string) The development/release status substring
-
     ttf: (fontTools.ttLib.TTFont) for font file
 
     version_string_parts: (list) List that maintains in memory semicolon parsed substrings of font version string
@@ -109,7 +107,6 @@ class FontVersion(object):
         # version string substring data
         self.version_string_parts = []
         self.version = ""
-        self.status = ""
         self.state = ""
         self.metadata = []
 
@@ -291,26 +288,22 @@ class FontVersion(object):
         if len(self.version_string_parts) > 1:
             status_needle = self.version_string_parts[1]  # define as the second substring in the version string
             self.contains_status = False  # reset each time there is a parse attempt and let logic below define
-            self.status = ""  # reset each time there is a parse attempt and let logic below define
 
             if self._is_development_substring(status_needle):
                 self.contains_status = True
                 self.is_development = True
-                self.status = status_needle
             else:
                 self.is_development = False
 
             if self._is_release_substring(status_needle):
                 self.contains_status = True
                 self.is_release = True
-                self.status = status_needle
             else:
                 self.is_release = False
         else:
             self.contains_status = False
             self.is_development = False
             self.is_release = False
-            self.status = ""
 
     def _parse_version_substrings(self, version_string):
         """
@@ -326,32 +319,35 @@ class FontVersion(object):
         else:
             self.version_string_parts = [version_string]
 
-    def _set_status_indicator_string(self, status_string):
+    def _set_state_status_substring(self, state_status_string):
         """
-        Private method that sets the status substring (defined as self.version_string_parts[1]) with a string value
+        Private method that sets the status substring (defined as self.version_string_parts[1]) in the
+        FontVersion.version_string_parts[1] list position.  The method preserves Other metadata when present in
+        the version string.
 
-        :param status_string: (string) the string value to insert at the status substring position of the
+        :param state_status_string: (string) the string value to insert at the status substring position of the
                                self.version_string_parts list
 
         :return: None
         """
-        # TODO: review and update after state changes are made in the libary
         if len(self.version_string_parts) > 1:
-            teststring = self.version_string_parts[1]
-            if self._is_release_substring(teststring) or self._is_development_substring(teststring):
+            prestring = self.version_string_parts[1]
+            state_response = self._is_state_substring_return_state_match(prestring)
+            is_state_substring = state_response[0]
+            if self._is_release_substring(prestring) or self._is_development_substring(prestring) or is_state_substring:
                 # directly replace when existing status substring
-                self.version_string_parts[1] = status_string
+                self.version_string_parts[1] = state_status_string
             else:
                 # if the second item of the substring list is not a status string, save it and all subsequent list items
                 # then create a new list with inserted status string value
                 self.version_string_parts = [self.version_string_parts[0]]  # redefine list as list with version number
-                self.version_string_parts.append(status_string)       # define the status substring as next item
+                self.version_string_parts.append(state_status_string)       # define the status substring as next item
                 for item in self.metadata:  # iterate through all previous metadata substrings and append to list
                     self.version_string_parts.append(item)
         else:
             # if the version string is defined as only a version number substring (i.e. list size = 1),
             # write the new status substring to the list.  Nothing else required
-            self.version_string_parts.append(status_string)
+            self.version_string_parts.append(state_status_string)
 
         # update FontVersion truth testing properties based upon the new data
         self._parse()
@@ -457,15 +453,21 @@ class FontVersion(object):
         """
         return self.metadata
 
-    def get_status_substring(self):
+    def get_state_status_substring(self):
         """
-        get_status_substring is a public method that returns the status substring at position 2 of the semicolon
-        delimited version string.  This substring can include any of the following labels:
-        "DEV", "RELEASE", "[sha1]-dev", "[sha1]-release"
+        get_state_status_substring is a public method that returns the state/status substring at position 2 of the
+        semicolon delimited version string.  This substring can include any of the following labels:
+        "DEV", "RELEASE", "[state]-dev", "[state]-release"
 
         :return: string (Python 3) or unicode (Python 2), empty string if this substring is not set in the font
         """
-        return self.status
+        if len(self.version_string_parts) > 1:
+            if self.is_development or self.is_release or self.contains_state:
+                return self.version_string_parts[1]
+            else:
+                return ""
+        else:
+            return ""
 
     def set_git_commit_sha1(self, development=False, release=False):
         """
@@ -499,7 +501,7 @@ class FontVersion(object):
         else:             # else just use the hash digest
             hash_substring = git_sha1_hash
 
-        self._set_status_indicator_string(hash_substring)
+        self._set_state_status_substring(hash_substring)
         # update object attributes with new data
         self._parse()
 
@@ -509,7 +511,7 @@ class FontVersion(object):
 
         :return: None
         """
-        self._set_status_indicator_string(self.develop_string)
+        self._set_state_status_substring(self.develop_string)
 
     def set_release_status(self):
         """
@@ -517,7 +519,7 @@ class FontVersion(object):
 
         :return: None
         """
-        self._set_status_indicator_string(self.release_string)
+        self._set_state_status_substring(self.release_string)
 
     def set_version_number(self, version_number):
         """

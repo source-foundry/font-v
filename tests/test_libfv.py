@@ -224,7 +224,6 @@ def test_libfv_fontversion_obj_instantiation_with_ttfont_object(allfonts):
     assert fv1.sha1_develop == fv2.sha1_develop
     assert fv1.sha1_release == fv2.sha1_release
     assert fv1.version == fv2.version
-    assert fv1.status == fv2.status
     assert fv1.metadata == fv2.metadata
     assert fv1.contains_status == fv2.contains_status
     assert fv1.contains_metadata == fv2.contains_metadata
@@ -513,19 +512,19 @@ def test_libfv_get_metadata_method():
 
 def test_libfv_get_status_method_development(devfonts):
     fv = FontVersion(devfonts)
-    status_string = fv.get_status_substring()
+    status_string = fv.get_state_status_substring()
     assert status_string == fv.version_string_parts[1]
 
 
 def test_libfv_get_status_method_release(relfonts):
     fv = FontVersion(relfonts)
-    status_string = fv.get_status_substring()
+    status_string = fv.get_state_status_substring()
     assert status_string == fv.version_string_parts[1]
 
 
 def test_libfv_get_status_method_nostatus(metafonts):
     fv = FontVersion(metafonts)
-    status_string = fv.get_status_substring()
+    status_string = fv.get_state_status_substring()
     assert status_string == ""
 
 
