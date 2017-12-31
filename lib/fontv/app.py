@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ===============================================================
-# font-v
-#  A font version string editing tool built on the libfv library
-#
-# Copyright 2017 Christopher Simpkins
-# MIT License
-# ===============================================================
+#     font-v──────────────────────────────────────────────────────────────────┐
+#     │                                                                       │
+#     │ A font version string reporting and modification tool                 │
+#     │                                                                       │
+#     │ Copyright 2017 Christopher Simpkins                                   │
+#     │ MIT License                                                           │
+#     │                                                                       │
+#     │ Source: https://github.com/source-foundry/font-v                      │
+#     │                                                                       │
+#     └───────────────────────────────────────────────────────────────────────┘
 
 from __future__ import unicode_literals
 

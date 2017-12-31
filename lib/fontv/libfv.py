@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ========================================================================================
-#
-#  libfv.py
-#   A Python library module that supports read/modification/write of .otf and .ttf
-#   font version strings
-#
-#  Copyright 2017 Christopher Simpkins
-#  MIT License
-#
-# ========================================================================================
+#     libfv.py────────────────────────────────────────────────────────────────┐
+#     │                                                                       │
+#     │ A Python library module that supports read/modification/write of .otf │
+#     │ and .ttf font version strings                                         │
+#     │                                                                       │
+#     │ Copyright 2017 Christopher Simpkins                                   │
+#     │ MIT License                                                           │
+#     │                                                                       │
+#     │ Source: https://github.com/source-foundry/font-v                      │
+#     │                                                                       │
+#     └───────────────────────────────────────────────────────────────────────┘
 
 from __future__ import unicode_literals
 
@@ -254,7 +255,6 @@ class FontVersion(object):
             self.metadata = []
             self.contains_metadata = False
 
-    # TODO: add tests
     def _parse_state(self):
         """
         Private method that parses a font version string for [ ... ] delimited data that represents the state
@@ -472,6 +472,7 @@ class FontVersion(object):
         else:
             return ""
 
+    # TODO: add tests
     def set_git_commit_sha1(self, development=False, release=False):
         """
         set_git_commit_sha1 is a public method that adds a git commit sha1 hash label to the font version string
