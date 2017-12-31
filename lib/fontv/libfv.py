@@ -37,6 +37,8 @@ class FontVersion(object):
 
     contains_metadata: (boolean) boolean for presence of metadata in version string
 
+    contains_state: (boolean) boolean for presence of state substring metadata in the version string
+
     contains_status: (boolean) boolean for presence of development/release status substring in the version string
 
     develop_string: (string) The string to use for development builds in the absence of git commit SHA1 string
@@ -55,7 +57,9 @@ class FontVersion(object):
 
     sha1_release: (string) The string to append to the git SHA1 hash string for release builds
 
-    status: (string) The development/release status string
+    state: (string) The state metadata substring
+
+    status: (string) The development/release status substring
 
     ttf: (fontTools.ttLib.TTFont) for font file
 
@@ -102,18 +106,22 @@ class FontVersion(object):
 
         self._nameID_5_dict = {}
 
+        # version string substring data
         self.version_string_parts = []
         self.version = ""
         self.status = ""
+        self.state = ""
         self.metadata = []
 
-        # truth test values for string contents
+        # truth test values for version string contents, updated with self._parse() method calls following updates to
+        #  in memory version string data with methods in this library
         self.contains_metadata = False
+        self.contains_state = False
         self.contains_status = False
         self.is_development = False
         self.is_release = False
 
-        # object instantiation method calls
+        # object instantiation method call (truth test values updated in the following method)
         self._read_version_string()  # read version string on fontpath at object instantiation
 
     def __eq__(self, otherfont):
@@ -177,7 +185,8 @@ class FontVersion(object):
         """
         # metadata parsing
         self._parse_metadata()         # parse the metadata
-        self._parse_status()           # parse the version substring dev/rel status indicator
+        self._parse_state()            # parse the state substring data
+        self._parse_status()           # parse the version substring dev/rel status indicator data
 
     def _read_version_string(self):
         """
@@ -212,7 +221,7 @@ class FontVersion(object):
         # define version as first substring
         self.version = self.version_string_parts[0]
 
-        self._parse()
+        self._parse()  # update FontVersion object attributes based upon the data read in
 
     def _get_repo_commit(self):
         """
@@ -247,6 +256,29 @@ class FontVersion(object):
         else:
             self.metadata = []
             self.contains_metadata = False
+
+    def _parse_state(self):
+        """
+        Private method that parses a font version string for [ ... ] delimited data that represents the state
+        substring.  The result of this test is used to define state data in the FontVersion object.
+
+        :return: None
+        """
+        if len(self.version_string_parts) > 1:
+            # test for regular expression pattern match for state substring at version string list position 1
+            # this method call returns tuple of (truth test for match, matched state string (or empty string))
+            response = self._is_state_substring_return_state_match(self.version_string_parts[1])
+            is_state_substring = response[0]
+            state_substring_match = response[1]
+            if is_state_substring is True:
+                self.contains_state = True
+                self.state = state_substring_match
+            else:
+                self.contains_state = False
+                self.state = ""
+        else:
+            self.contains_state = False
+            self.state = ""
 
     def _parse_status(self):
         """
@@ -350,6 +382,15 @@ class FontVersion(object):
             return True
         else:
             return False
+
+    def _is_state_substring_return_state_match(self, needle):
+        regex_pattern = r"\s?\[([a-zA-Z0-9_\-\.]{1,50})\]"
+        p = re.compile(regex_pattern)
+        m = p.match(needle)
+        if m:
+            return True, m.group()
+        else:
+            return False, ""
 
     def clear_metadata(self):
         """
