@@ -396,7 +396,7 @@ class FontVersion(object):
         p = re.compile(regex_pattern)
         m = p.match(needle)
         if m:
-            return True, m.group()
+            return True, m.group(1)
         else:
             return False, ""
 
