@@ -335,6 +335,7 @@ class FontVersion(object):
 
         :return: None
         """
+        # TODO: review and update after state changes are made in the libary
         if len(self.version_string_parts) > 1:
             teststring = self.version_string_parts[1]
             if self._is_release_substring(teststring) or self._is_development_substring(teststring):
@@ -364,7 +365,7 @@ class FontVersion(object):
 
         :return: boolean True = is development substring and False = is not a development substring
         """
-        if self.develop_string == needle.strip() or self.sha1_develop in needle:
+        if self.develop_string == needle.strip() or self.sha1_develop in needle[-len(self.sha1_develop):]:
             return True
         else:
             return False
@@ -378,12 +379,20 @@ class FontVersion(object):
 
         :return: boolean True = is release substring and False = is not a release substring
         """
-        if self.release_string == needle.strip() or self.sha1_release in needle:
+        if self.release_string == needle.strip() or self.sha1_release in needle[-len(self.sha1_release):]:
             return True
         else:
             return False
 
     def _is_state_substring_return_state_match(self, needle):
+        """
+        private method that returns a tuple of boolean, string.  The boolean value reflects the truth test needle is a
+        state substring.  The string value is the matched state substring that is defined as the contents inside [ and ]
+        delimiters as defined by the regex pattern.  If there is no match, this item in the tuple is an empty string
+
+        :param needle: (string) test string to attempt match for state substring
+        :return: (boolean, string)  see full docstring for details re: interpretation of returned values
+        """
         regex_pattern = r"\s?\[([a-zA-Z0-9_\-\.]{1,50})\]"
         p = re.compile(regex_pattern)
         m = p.match(needle)
