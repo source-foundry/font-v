@@ -254,6 +254,7 @@ class FontVersion(object):
             self.metadata = []
             self.contains_metadata = False
 
+    # TODO: add tests
     def _parse_state(self):
         """
         Private method that parses a font version string for [ ... ] delimited data that represents the state
@@ -319,6 +320,7 @@ class FontVersion(object):
         else:
             self.version_string_parts = [version_string]
 
+    # TODO: add tests with state strings
     def _set_state_status_substring(self, state_status_string):
         """
         Private method that sets the status substring (defined as self.version_string_parts[1]) in the
@@ -380,6 +382,7 @@ class FontVersion(object):
         else:
             return False
 
+    # TODO: add tests
     def _is_state_substring_return_state_match(self, needle):
         """
         private method that returns a tuple of boolean, string.  The boolean value reflects the truth test needle is a
@@ -489,17 +492,18 @@ class FontVersion(object):
         :return: None
         """
         git_sha1_hash = self._get_repo_commit()
+        git_sha1_hash_formatted = "[" + git_sha1_hash + "]"
 
         if development and release:
             raise ValueError("Cannot set both development parameter and release parameter to a value of True in "
                              "fontv.libfv.FontVersion.set_git_commit_sha1() method.  These are mutually exclusive.")
 
         if development:   # if request for development status label, append FontVersion.sha1_develop to hash digest
-            hash_substring = git_sha1_hash + self.sha1_develop
+            hash_substring = git_sha1_hash_formatted + self.sha1_develop
         elif release:     # if request for release status label, append FontVersion.sha1_release to hash digest
-            hash_substring = git_sha1_hash + self.sha1_release
+            hash_substring = git_sha1_hash_formatted + self.sha1_release
         else:             # else just use the hash digest
-            hash_substring = git_sha1_hash
+            hash_substring = git_sha1_hash_formatted
 
         self._set_state_status_substring(hash_substring)
         # update object attributes with new data

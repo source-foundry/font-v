@@ -200,7 +200,7 @@ def statefonts(request):
 
 # utilities for testing
 def _test_hexadecimal_sha1_string_matches(needle):
-    p = re.compile("""[(a-f|0-9)]{7,10}""")
+    p = re.compile("""\[[(a-f|0-9)]{7,10}\]""")
     m = p.match(needle)
     if m is None:
         return False
