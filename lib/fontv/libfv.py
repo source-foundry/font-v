@@ -167,6 +167,18 @@ class FontVersion(object):
     #     """
     #     return self.get_version_number_tuple() < otherfont.get_version_number_tuple()
 
+    def _parse(self):
+        """
+        Private method that parses version string data to set FontVersion object attributes.  Called on FontVersion
+        object instantiation and at the completion of setter methods in the library in order to update object
+        attributes with new data.
+
+        :return: None
+        """
+        # metadata parsing
+        self._parse_metadata()         # parse the metadata
+        self._parse_status()           # parse the version substring dev/rel status indicator
+
     def _read_version_string(self):
         """
         _read_version_string is a private method that reads OpenType name table ID 5 data from otf and ttf fonts
@@ -200,9 +212,7 @@ class FontVersion(object):
         # define version as first substring
         self.version = self.version_string_parts[0]
 
-        # metadata parsing
-        self._parse_metadata()         # parse the metadata
-        self._parse_status()           # parse the version substring dev/rel status indicator
+        self._parse()
 
     def _get_repo_commit(self):
         """
@@ -311,8 +321,7 @@ class FontVersion(object):
             self.version_string_parts.append(status_string)
 
         # update FontVersion truth testing properties based upon the new data
-        self._parse_status()
-        self._parse_metadata()
+        self._parse()
 
     def _is_development_substring(self, needle):
         """
@@ -352,8 +361,7 @@ class FontVersion(object):
         :return: None
         """
         self.version_string_parts = [self.version_string_parts[0]]
-        self._parse_metadata()
-        self._parse_status()
+        self._parse()
 
     def get_version_number_tuple(self):
         """
@@ -442,6 +450,8 @@ class FontVersion(object):
             hash_substring = git_sha1_hash
 
         self._set_status_indicator_string(hash_substring)
+        # update object attributes with new data
+        self._parse()
 
     def set_development_status(self):
         """
@@ -482,8 +492,7 @@ class FontVersion(object):
         :return: None
         """
         self._parse_version_substrings(version_string)
-        self._parse_metadata()
-        self._parse_status()
+        self._parse()
 
     def write_version_string(self, fontpath=None):
         """
