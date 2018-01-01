@@ -89,7 +89,7 @@ def main():
             sys.stderr.write("[font-v] ERROR: Please use either --dev or --rel argument, not both." + os.linesep)
             sys.exit(1)
 
-        # test arguments
+        # Parse command line arguments to determine user request(s)
         for arg in c.argv[1:]:
             if arg == "--sha1":
                 add_sha1 = True
@@ -117,7 +117,6 @@ def main():
 
                 version_pre = version_pre.replace("-", ".")   # specified on command line as 1-000
                 version_final = version_pre.replace("_", ".")   # or as 1_000
-                version = "Version " + version_final
             elif len(arg) > 4 and (arg[-4:].lower() == ".ttf" or arg[-4:].lower() == ".otf"):
                 if file_exists(arg):
                     fontpath_list.append(arg)
@@ -131,42 +130,31 @@ def main():
             sys.exit(0)
 
         for fontpath in fontpath_list:
-            tt = ttLib.TTFont(fontpath)
-            namerecord_list = tt['name'].names
-            for record in namerecord_list:
-                if record.nameID == 5:
-                    fvo = FontVersionObj(fontpath, record)
+            fv = FontVersion(fontpath)
 
-                    if add_new_version is True:
-                        version_string = version
-                    else:
-                        version_string = fvo.get_version_string()
+            # define a new version number substring
+            if add_new_version is True:
+                fv.set_version_number(version_final)
 
-                    if add_sha1 is True:
-                        sha_string = "; " + fvo.get_repo_commit()
-                        version_string += sha_string
+            # define new state +/- status metadata substring
+            if add_sha1 is True:
+                if add_dev_string is True:
+                    fv.set_git_commit_sha1(development=True)
+                elif add_release_string is True:
+                    fv.set_git_commit_sha1(release=True)
+                else:
+                    fv.set_git_commit_sha1()
+            else:
+                # define new status metadata substring only
+                if add_dev_string is True:
+                    fv.set_development_status()
+                elif add_release_string is True:
+                    fv.set_release_status()
 
-                    if add_release_string is True:
-                        if add_sha1 is True:
-                            version_string += "-release"
-                        else:
-                            version_string += "; RELEASE"
-                    elif add_dev_string is True:
-                        if add_sha1 is True:
-                            version_string += "-dev"
-                        else:
-                            version_string += "; DEV"
+            fv.write_version_string()
 
-                    post_string = fvo.get_post_string()
-                    if len(post_string) > 0:
-                        post_string_add = ";" + post_string
-                        version_string += post_string_add
-                    # write to fonttools ttLib object name table record
-                    record.string = version_string
-            # then write out the name table modifications to the font binary
-            tt.save(fontpath)
             print("[✓] " + fontpath + " version string was successfully changed "
-                  "to:" + os.linesep + version_string + os.linesep)
+                  "to:" + os.linesep + fv.get_version_string() + os.linesep)
     else:  # user did not enter an acceptable subcommand
         sys.stderr.write("[font-v] ERROR: Please enter a font-v subcommand with your request." + os.linesep)
         sys.exit(1)
