@@ -1,42 +1,43 @@
-## Contributing
+# Contributing
 
-### Issue Reports
+## Issue Reports
 
-Please search the existing issue reports (including open and closed) for a history of the issue that you would like to report in order to confirm that we have not already addressed it.  If your issue is a new one, please file a new issue report here on the Github repository.
+Please review the existing issue reports (including open and closed) for a history of the issue that you would like to report in order to confirm that we have not already addressed it.  If your issue is new, please [file a new issue report](https://github.com/source-foundry/font-v/issues/new) here on the Github repository.
 
+## Source Code Contributions
 
-### Source Code Contributions
+Contributions to the source code are highly encouraged and welcomed!  We recommend that you open a new issue report to discuss a major source code refactor, implementation of a major new feature, or any other major modification that requires an extended amount of time/effort before you invest the time in the work (assuming that your intent is for this to be merged upstream).
 
-Contributions to the source code are highly encouraged and welcomed!  We recommend that you open a new issue report to discuss a major source code refactor, implementation of a major new feature, or any other major modification that requires an extended amount of time/effort before you invest the time in the work (assuming that the intent is for this to be merged upstream).
+### OpenFV compliance
 
-#### OpenFV compliance
+Work in this project must maintain compliance with the [OpenFV semantic font versioning specification](https://github.com/openfv/openfv).  Please read and understand this specification before you submit work for review. Work that does not comply with the OpenFV specification will not be accepted.  If you would like to submit a proposal for changes to the specification itself, please do so on the OpenFV repository rather than on this repository.
 
-Work in this project must maintain compliance with the [OpenFV semantic font versioning specification](https://github.com/openfv/openfv).  Please read and understand this specification before you submit revisions for review.  All modifications to source and documentation that lead to elimination of support of any part of the OpenFV specification require modification of the specification itself through the OpenFV repository before proposals for font-v changes will be reviewed.  Please submit a proposal for these changes to the OpenFV repository and await confirmation that your changes are implemented in a new version of the specification before you submit source changes to the font-v project.
+### License
 
-#### License
+To contribute source code to this project you must be willing to contribute your source changes under the existing [MIT license](https://github.com/source-foundry/font-v/blob/master/docs/LICENSE).  If this is not acceptable, please do not submit your changes for review.
 
-To contribute source code to this project you must be willing to contribute your source changes under the existing [MIT license](https://github.com/source-foundry/font-v/blob/master/docs/LICENSE).
+### Development Installs
 
-#### Development Installs
-
-git clone the font-v repository and install a development version locally with the following command:
+git clone the font-v repository and base your work on the `dev` branch.  Install a local development version of the project with the following command (executed in the root of the repository):
 
 ```
 $ python setup.py develop
 ```
 
-This will allow you to test with the source code changes that you make immediately (i.e. without a new install).
+This will allow you to immediately test source code changes that you make in the Python modules (i.e. without a new install with every change).
 
-#### Testing
+### Source Code Testing
 
-We use tox and pytest for source code testing.  You can install these packages locally with:
+The font-v project is tested against current versions of the Python 2.7, 3.4, 3.5, and 3.6 interpreters across Linux, macOS, and Windows platforms.  We intend to maintain this breadth of cross platform and Python interpreter release history support as new Python releases become available.  Please submit an issue report on the repository to discuss any proposed changes that will narrow the level of Python interpreter or platform support in the project.
+
+We use [tox](https://tox.readthedocs.io/en/latest/) and [pytest](https://docs.pytest.org/en/latest/) for Python source code testing.  You can install these testing packages on your development system with:
 
 ```
 $ pip install tox
 $ pip install pytest
 ```
 
-To run the `font-v` project tests locally across different Python interpreter versions, use a command like the following from the root of the repository, specifying your target Python interpreter versions:
+To run the `font-v` project tests locally across different Python interpreter versions, install all Python interpreter versions that you intend to use for testing and then use a command like the following from the root of the repository, specifying the target Python interpreter versions:
 
 ```
 $ tox -e py27,py36
@@ -44,8 +45,12 @@ $ tox -e py27,py36
 
 See the tox documentation for additional details and further information about available Python interpreter versions.
 
-Please include pytest tests with all source changes!
+Please include new pytest tests (or update existing tests if appropriate) with all source changes!  This will greatly accelerate the review process for your changes.
 
-#### Contribute Source Upstream
+Cross platform continuous integration testing is performed on all pull requests that are submitted to the project.  You may view the results of the tests on your source code changes in the pull request thread.
 
-Submit a pull request to the `font-v` repository using the Github UI.  Please refer to Github documentation for details on the pull request workflow or feel free to contact us to ask for additional information if you have not previously attempted a pull request on Github.  We would be glad to help!
+### Propose your changes
+
+When you are ready to propose your source code changes for upstream review, submit a pull request to the `font-v` repository using the Github UI.  Please include sufficient information in the initial post of the pull request to orient the project maintainer to your changes as well as links to any pertinent open issue report threads.
+
+Please refer to Github documentation for details on the pull request workflow or feel free to contact us to ask for additional information if you have not previously attempted a pull request on Github.  We would be glad to help so that this is not a barrier to your contribution!
