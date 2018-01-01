@@ -199,8 +199,17 @@ def statefonts(request):
 
 
 # utilities for testing
+def _test_hexadecimal_sha1_formatted_string_matches(needle):
+    p = re.compile("""\[[(a-f|0-9)]{7,15}\]""")
+    m = p.match(needle)
+    if m is None:
+        return False
+    else:
+        return True
+
+
 def _test_hexadecimal_sha1_string_matches(needle):
-    p = re.compile("""\[[(a-f|0-9)]{7,10}\]""")
+    p = re.compile("""[(a-f|0-9)]{7,15}""")
     m = p.match(needle)
     if m is None:
         return False
@@ -375,6 +384,47 @@ def test_libfv_fontversion_object_properties_truth_release_ttfont_object(relfont
     assert fv.contains_status is True
     assert fv.is_development is False
     assert fv.is_release is True
+
+
+def test_libfv_fontversion_object_properties_truth_sha(statefonts):
+    fv = FontVersion(statefonts)
+    assert fv.contains_state is True
+    assert len(fv.state) > 0
+
+
+def test_libfv_fontversion_object_properties_truth_sha_ttfont_object(statefonts):
+    ttf = TTFont(statefonts)
+    fv = FontVersion(ttf)
+    assert fv.contains_state is True
+    assert len(fv.state) > 0
+
+
+def test_libfv_fontversion_object_properties_truth_state_versionstring_only():
+    fv1 = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    fv2 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
+
+    assert fv1.contains_state is False
+    assert fv2.contains_state is False
+
+    assert len(fv1.state) == 0
+    assert len(fv2.state) == 0
+
+
+def test_libfv_fontversion_object_properties_truth_state_meta_without_state():
+    fv1 = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
+    fv2 = FontVersion("tests/testfiles/Test-VersionMeta.otf")
+    fv3 = FontVersion("tests/testfiles/Test-VersionMoreMeta.ttf")
+    fv4 = FontVersion("tests/testfiles/Test-VersionMoreMeta.otf")
+
+    assert fv1.contains_state is False
+    assert fv2.contains_state is False
+    assert fv3.contains_state is False
+    assert fv4.contains_state is False
+
+    assert len(fv1.state) == 0
+    assert len(fv2.state) == 0
+    assert len(fv3.state) == 0
+    assert len(fv4.state) == 0
 
 
 def test_libfv_fontversion_object_versionparts_meta_lists_versionstring_only():
@@ -564,6 +614,38 @@ def test_libfv_get_status_method_nostatus(metafonts):
     assert status_string == ""
 
 
+def test_libfv_is_state_substring_return_match_valid():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match("[abcd123]")
+    assert is_state_substring is True
+    assert state_substring == "abcd123"
+
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match("[abcd123]-dev")
+    assert is_state_substring is True
+    assert state_substring == "abcd123"
+
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match("[abcd123]-release")
+    assert is_state_substring is True
+    assert state_substring == "abcd123"
+
+
+def test_libfv_is_state_substring_return_match_invalid():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match("abcd123")
+    assert is_state_substring is False
+    assert state_substring == ""
+
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match("{abcd123}")
+    assert is_state_substring is False
+    assert state_substring == ""
+
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match("[&%$#@!]")
+    assert is_state_substring is False
+    assert state_substring == ""
+
+
 def test_get_version_number_tuple():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
     assert fv.get_version_number_tuple() == (1, 0, 1, 0)
@@ -743,27 +825,36 @@ def test_libfv_set_default_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
     fv.set_git_commit_sha1()
     sha_needle = fv.version_string_parts[1]
-    assert _test_hexadecimal_sha1_string_matches(sha_needle) is True
+    assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
+    assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
     assert ("-dev" in sha_needle) is False
     assert ("-release" in sha_needle) is False
+    assert ("DEV" in sha_needle) is False
+    assert ("RELEASE" in sha_needle) is False
 
 
 def test_libfv_set_development_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
     fv.set_git_commit_sha1(development=True)
     sha_needle = fv.version_string_parts[1]
-    assert _test_hexadecimal_sha1_string_matches(sha_needle) is True
+    assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
+    assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
     assert ("-dev" in sha_needle) is True
     assert ("-release" in sha_needle) is False
+    assert ("DEV" in sha_needle) is False
+    assert ("RELEASE" in sha_needle) is False
 
 
 def test_libfv_set_release_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
     fv.set_git_commit_sha1(release=True)
     sha_needle = fv.version_string_parts[1]
-    assert _test_hexadecimal_sha1_string_matches(sha_needle) is True
+    assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
+    assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
     assert ("-dev" in sha_needle) is False
     assert ("-release" in sha_needle) is True
+    assert ("DEV" in sha_needle) is False
+    assert ("RELEASE" in sha_needle) is False
 
 
 def test_libfv_set_version_number(allfonts):
