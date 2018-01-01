@@ -439,7 +439,7 @@ class FontVersion(object):
         See OpenFV specification for the font version number format definition and semantics
         (https://github.com/openfv/openfv)
 
-        :return: tuple of integers
+        :return: tuple of integers or None if the version number substring is inappropriately formatted
         """
         match = re.search(r"\d{1,3}\.\d{1,3}", self.version)
         if match:
