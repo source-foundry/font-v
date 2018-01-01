@@ -5,7 +5,7 @@
 # commandlines.py
 #  Command line application argument parsing library for Python
 #
-# Copyright 2017 Christopher Simpkins
+# Copyright 2018 Christopher Simpkins
 # MIT License
 #
 

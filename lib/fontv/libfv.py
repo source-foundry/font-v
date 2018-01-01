@@ -6,7 +6,7 @@
 #     │ A Python library module that supports read/modification/write of .otf │
 #     │ and .ttf font version strings                                         │
 #     │                                                                       │
-#     │ Copyright 2017 Christopher Simpkins                                   │
+#     │ Copyright 2018 Christopher Simpkins                                   │
 #     │ MIT License                                                           │
 #     │                                                                       │
 #     │ Source: https://github.com/source-foundry/font-v                      │

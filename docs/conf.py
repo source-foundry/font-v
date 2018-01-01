@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'libfv'
-copyright = u'2017, Christopher Simpkins. CC BY 4.0'
+copyright = u'2018, Christopher Simpkins. CC BY 4.0'
 author = u'Christopher Simpkins'
 
 # The version info for the project you're documenting, acts as replacement for
