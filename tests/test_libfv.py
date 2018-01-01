@@ -596,6 +596,12 @@ def test_libfv_get_metadata_method():
     assert fv6.get_metadata_list() == ["metadata string", "another metadata string"]
 
 
+def test_libfv_get_status_method_onlyversion():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    status_string = fv.get_state_status_substring()
+    assert status_string == ""
+
+
 def test_libfv_get_status_method_development(devfonts):
     fv = FontVersion(devfonts)
     status_string = fv.get_state_status_substring()
@@ -646,7 +652,7 @@ def test_libfv_is_state_substring_return_match_invalid():
     assert state_substring == ""
 
 
-def test_get_version_number_tuple():
+def test_libfv_get_version_number_tuple():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
     assert fv.get_version_number_tuple() == (1, 0, 1, 0)
 
@@ -665,6 +671,16 @@ def test_get_version_number_tuple():
     assert fv.get_version_number_tuple() == (10, 0, 0, 1)
     fv.version = "Version 100.001"
     assert fv.get_version_number_tuple() == (100, 0, 0, 1)
+
+
+def test_libfv_get_version_number_tuple_bad_version_number():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    assert fv.get_version_number_tuple() == (1, 0, 1, 0)
+
+    # mock a bad version number substring
+    fv.set_version_number("x.xxx")
+    response = fv.get_version_number_tuple()
+    assert response is None
 
 
 def test_libfv_get_version_string_method():
