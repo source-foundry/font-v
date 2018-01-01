@@ -74,7 +74,7 @@ $ font-v report --dev Example-Regular.ttf
 
 ### Version number modification with `write`
 
-Enter the desired version number in `integer.integer` format after the `--ver=` flag. Support is provided for the intended period glyph to be replaced with an underscore `_` or dash `-` for users on platforms where the period is a special shell character.
+Enter the desired version number in `MAJOR.MINOR` format after the `--ver=` flag. Support is provided for the intended period glyph to be replaced in the command with an underscore `_` or dash `-` for users on platforms where the period is a special shell character.
 
 All of the following result in modification of the version number to `2.020`:
 
