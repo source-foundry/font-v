@@ -96,7 +96,7 @@ The font version number format should follow the [OpenFV specification](https://
 
 ### git SHA1 commit short hash state metadata with `write`
 
-If your typeface source is under git version control, you can stamp the version string with a short (generally 7-8 characters) SHA1 hash digest that represents the current commit at the time of the font modification with font-v.  The git commit SHA1 hash digest is defined by the `git rev-list` command at the HEAD of your active repository branch and will match the same number of initial characters in the git commit SHA1 hash digest that is displayed when you review the commits in your `git log` (or review the commit hashes in the UI of git repository hosting platforms like Github).  This is intended to maintain metadata in the font about source code state at build time and is defined according to the [OpenFV definition of the State metadata substring](https://github.com/openfv/openfv).
+If your typeface source is under git version control, you can stamp the font binary version string with a short (generally n=7-8 characters, a number that is determined in order to confirm that it represents a unique value for the repository commit) SHA1 hash digest that represents the git commit at the HEAD of the active git branch.  The git commit SHA1 hash digest is defined by the `git rev-list` command at the HEAD of your active repository branch and will match the initial n characters of the git commit SHA1 hash digest that is displayed when you review your `git log` (or review the commit hashes in the UI of git repository hosting platforms like Github).  This is intended to maintain metadata in the font binary about source code state at build time. Formatting of this state substring is defined according to the [OpenFV definition of the State metadata substring](https://github.com/openfv/openfv).
 
 Use the `--sha1` option with the `write` subcommand like this:
 
@@ -110,7 +110,7 @@ The short SHA1 hash digest is added with the following version string formatting
 Version 1.000;[cf8dc25]
 ```
 
-This can be combined with other options (e.g. to modify the version number or add status metadata) in the same command.  Other metadata are maintained and appended to the revised version string in a semicolon delimited format with this modification.
+This can be combined with other options (e.g. to modify the version number +/- add development or release status metadata) in the same command.  Other metadata are maintained and appended to the revised version string in a semicolon delimited format with this modification.
 
 ### Add development / release status metadata with `write`
 
