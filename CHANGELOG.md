@@ -2,8 +2,23 @@
 
 # v0.5.0
 
+font-v executable changes:
+
+- added full support for OpenFV font versioning specification (including version number substring, state metadata substring, status metadata substring, other metadata substring(s))
+- refactored entire `write` subcommand implementation to the libfv library
 - changed invalid ttf/otf file error to std error stream from std output stream
 - fixed incorrect option argument string displayed in the error message for `write` with undefined `--ver=` argument
+
+libfv changes:
+
+- modified the formatting of git commit SHA1 hash string state writes to `[sha1]` from `sha1` to support OpenFV specification
+- added FontVersion object attribute parsing after git commit sha1 hash writes to in memory version strings
+- refactored development/release status substring truth testing method approach to eliminate matches against strings that fall outside of spec
+- refactored FontVersion.get_status_substring method to FontVersion.get_state_status_substring with new implementation
+- refactored FontVersion._set_status_substring to FontVersion._set_state_status_substring with new implementation
+- eliminated FontVersion.status object attributed (unncessary)
+- revised version strings in test fonts to support OpenFV specification
+- modified all supporting tests for above changes
 
 ### v0.4.1
 
