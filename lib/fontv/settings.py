@@ -47,7 +47,7 @@ NOTES:
 
 The write subcommand --dev and --rel flags are mutually exclusive. Include up to one of these options.
 
-For platforms that treat the period as a special shell character, the --ver=[version #] version number definition should replace the desired version period glyph with an underscore or dash glyph.  For example, 2.001 can be defined with either of the following:
+For platforms that treat the period as a special shell character, the --ver=[version #] an underscore or dash glyph can be used in place of a period to define the version number on the command line.  For example, 2.001 can be defined with either of the following:
 
    $ font-v write --ver=2_001
    $ font-v write --ver=2-001
