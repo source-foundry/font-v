@@ -29,7 +29,8 @@ class FontVersion(object):
     """
     FontVersion is a ttf and otf font version string class that provides support for font version string reads,
     reporting, modification, & writes.  It provides full support for the OpenFV font versioning specification
-    (https://github.com/openfv/openfv).
+    (https://github.com/openfv/openfv).  Support is provided for instantiation from ttf and otf fonts, as well
+    as from fontTools.ttLib.ttFont objects (https://github.com/fonttools/fonttools).
 
     The class works on Python "strings".  String types indicated below refer to the Python2 unicode type and Python3
     string type.
@@ -106,7 +107,7 @@ class FontVersion(object):
         self._nameID_5_dict = {}
 
         # version string substring data
-        self.version_string_parts = []
+        self.version_string_parts = []  # list of substring items in version string (; delimited parse to list)
         self.version = ""
         self.state = ""
         self.metadata = []
@@ -120,7 +121,7 @@ class FontVersion(object):
         self.is_release = False
 
         # object instantiation method call (truth test values updated in the following method)
-        self._read_version_string()  # read version string on fontpath at object instantiation
+        self._read_version_string()
 
     def __eq__(self, otherfont):
         """
@@ -188,9 +189,8 @@ class FontVersion(object):
 
     def _read_version_string(self):
         """
-        _read_version_string is a private method that reads OpenType name table ID 5 data from otf and ttf fonts
-        and sets FontVersion object properties.  The method is called on instantiation of a FontVersion
-        object
+        Private method that reads OpenType name table ID 5 data from a fontTools.ttLib.ttFont object and sets
+        FontVersion object properties.  The method is called on instantiation of a FontVersion object
 
         :return: None
         """
@@ -223,7 +223,7 @@ class FontVersion(object):
 
     def _get_repo_commit(self):
         """
-        Private method that makes a system git call via the GitPython package and returns a short git commit
+        Private method that makes a system git call via the GitPython library and returns a short git commit
         SHA1 hash string for the commit at HEAD using `git rev-list`.
 
         :return: (string) short git commit SHA1 hash string
@@ -241,8 +241,9 @@ class FontVersion(object):
     def _parse_metadata(self):
         """
         Private method that parses a font version string for semicolon delimited font version
-        string metadata.  Metadata are defined as anything beyond the first substring component of a version string
-        that is defined to include the word 'Version' followed by the version number and semicolon
+        string metadata.  Metadata are defined as anything beyond the first substring item of a version string.
+
+        See OpenFV specification for version substring definition details (https://github.com/openfv/openfv)
 
         :return: None
         """
@@ -257,14 +258,18 @@ class FontVersion(object):
 
     def _parse_state(self):
         """
-        Private method that parses a font version string for [ ... ] delimited data that represents the state
-        substring.  The result of this test is used to define state data in the FontVersion object.
+        Private method that parses a font version string for [ ... ] delimited data that represents the State
+        substring as defined by the OpenFV specification.  The result of this test is used to define State data
+        in the FontVersion object.
+
+        See OpenFV specification for the state substring metadata definition (https://github.com/openfv/openfv)
 
         :return: None
         """
         if len(self.version_string_parts) > 1:
-            # test for regular expression pattern match for state substring at version string list position 1
-            # this method call returns tuple of (truth test for match, matched state string (or empty string))
+            # Test for regular expression pattern match for state substring at version string list position 1
+            # as defined by OpenFV specification.
+            # This method call returns tuple of (truth test for match, matched state string (or empty string))
             response = self._is_state_substring_return_state_match(self.version_string_parts[1])
             is_state_substring = response[0]
             state_substring_match = response[1]
@@ -280,14 +285,16 @@ class FontVersion(object):
 
     def _parse_status(self):
         """
-        Private method that parses a font version string to determine if it contains
-        substring labels that indicate development/release status of the font based.  It is called
-        by the _read_version_string method on FontVersion instantiation.
+        Private method that parses a font version string to determine if it contains development/release Status
+        substring metadata as defined by the OpenFV specification. The result of this test is used to define Status
+        data in the FontVersion object.
+
+        See OpenFV specification for the Status substring metadata definition (https://github.com/openfv/openfv)
 
         :return: None
         """
         if len(self.version_string_parts) > 1:
-            status_needle = self.version_string_parts[1]  # define as the second substring in the version string
+            status_needle = self.version_string_parts[1]  # define as list item 1 as per OpenFV specification
             self.contains_status = False  # reset each time there is a parse attempt and let logic below define
 
             if self._is_development_substring(status_needle):
@@ -308,7 +315,7 @@ class FontVersion(object):
 
     def _parse_version_substrings(self, version_string):
         """
-        Private method that splits a full semicolon delimited version string on semicolon characters to a list
+        Private method that splits a full semicolon delimited version string on semicolon characters to a Python list.
 
         :param version_string: (string) the semicolon delimited version string to split
 
@@ -322,9 +329,11 @@ class FontVersion(object):
 
     def _set_state_status_substring(self, state_status_string):
         """
-        Private method that sets the status substring (defined as self.version_string_parts[1]) in the
-        FontVersion.version_string_parts[1] list position.  The method preserves Other metadata when present in
-        the version string.
+        Private method that sets the State/Status substring in the FontVersion.version_string_parts[1] list position.
+        The method preserves Other metadata when present in the version string.
+
+        See OpenFV specification for State/Status substring and Other metdata definition details
+        (https://github.com/openfv/openfv)
 
         :param state_status_string: (string) the string value to insert at the status substring position of the
                                self.version_string_parts list
@@ -355,8 +364,10 @@ class FontVersion(object):
 
     def _is_development_substring(self, needle):
         """
-        _is_development_substring is a private method that returns a boolean that indicates whether
-        the needle string meets the font-v definition of a development status string
+        Private method that returns a boolean that indicates whether the needle string meets the OpenFV specification
+        definition of a Development Status metadata substring.
+
+        See OpenFV specification for Status substring definition details (https://github.com/openfv/openfv)
 
         :param needle: (string) test string
 
@@ -369,8 +380,10 @@ class FontVersion(object):
 
     def _is_release_substring(self, needle):
         """
-        _is_release_substring is a private method that returns a boolean that indicates whether
-        the needle string meets the font-v definition of a development status string
+        Private method that returns a boolean that indicates whether the needle string meets the OpenFV specification
+        definition of a Release Status metadata substring.
+
+        See OpenFV specification for Status substring definition details (https://github.com/openfv/openfv)
 
         :param needle: (string) test string
 
@@ -383,9 +396,11 @@ class FontVersion(object):
 
     def _is_state_substring_return_state_match(self, needle):
         """
-        private method that returns a tuple of boolean, string.  The boolean value reflects the truth test needle is a
-        state substring.  The string value is the matched state substring that is defined as the contents inside [ and ]
-        delimiters as defined by the regex pattern.  If there is no match, this item in the tuple is an empty string
+        Private method that returns a tuple of boolean, string.  The boolean value reflects the truth test needle is a
+        State substring.  The match value is defined as the contents inside [ and ] delimiters as defined by the
+        regex pattern.  If there is no match, the string item in the tuple is an empty string.
+
+        See OpenFV specification for State substring definition details (https://github.com/openfv/openfv)
 
         :param needle: (string) test string to attempt match for state substring
         :return: (boolean, string)  see full docstring for details re: interpretation of returned values
@@ -400,10 +415,12 @@ class FontVersion(object):
 
     def clear_metadata(self):
         """
-        clear_metadata is a public method that clears all version string metadata in memory.  This results in the font
-        version number substring as the only in memory component of the original (i.e. what was read from font binary)
-        or modified (during execution of FontVersion methods or modification of object properties) version string.  The
-        intent is to support removal of unnecessary version string data that is included in the font binary.
+        Public method that clears all version string metadata in memory.  This results in a version string that ONLY
+        includes the version number substring.  The intent is to support removal of unnecessary version string data
+        that are included in a font binary.
+
+        See OpenFV specification for Version number substring and Metadata definition details
+        (https://github.com/openfv/openfv)
 
         :return: None
         """
@@ -412,9 +429,15 @@ class FontVersion(object):
 
     def get_version_number_tuple(self):
         """
-        get_version_number_tuple is a public method that returns a tuple of integer values with the following
-        definition: ( major version, minor version position 1, minor version position 2, minor version
-        position 3) where position is the decimal position of the integer in the minor version string
+        Public method that returns a tuple of integer values with the following definition:
+
+        ( major version, minor version position 1, minor version position 2, minor version position 3 )
+
+        where position is the decimal position of the integer in the minor version string.  The version number format is
+        defined by the OpenFV specification.
+
+        See OpenFV specification for the font version number format definition and semantics
+        (https://github.com/openfv/openfv)
 
         :return: tuple of integers
         """
@@ -436,9 +459,9 @@ class FontVersion(object):
 
     def get_version_string(self):
         """
-        get_version_string is a public method that returns the full version string as the joined contents of the
+        Public method that returns the full version string as the joined contents of the
         FontVersion.version_string_parts Python list.  It is joined with semicolon delimiters and returned as a
-        Python 2 unicode object or Python 3 string object based upon the interpreter in use
+        Python 2 unicode object or Python 3 string object based upon the Python interpreter in use.
 
         :return: string (Python 3) or unicode (Python 2)
         """
@@ -446,9 +469,11 @@ class FontVersion(object):
 
     def get_metadata_list(self):
         """
-        get_metadata_list is a public method that returns a Python list containing metadata substring items generated
-        by splitting the string on a semicolon delimiter.  Metadata are defined as all data in the font version string
-        following the first semicolon.  The version number string (i.e. "Version X.XXX") is not present in this list.
+        Public method that returns a Python list containing metadata substring items generated
+        by splitting the string on a semicolon delimiter.  Metadata are defined according to the OpenFV specification.
+        The version number string (i.e. "Version X.XXX") is not present in this list.
+
+        See OpenFV specification for Metadata definition details (https://github.com/openfv/openfv)
 
         :return: list of string (Python 3) or list of unicode (Python 2)
         """
@@ -456,9 +481,15 @@ class FontVersion(object):
 
     def get_state_status_substring(self):
         """
-        get_state_status_substring is a public method that returns the state/status substring at position 2 of the
-        semicolon delimited version string.  This substring can include any of the following labels:
-        "DEV", "RELEASE", "[state]-dev", "[state]-release"
+        Public method that returns the state and/or status substring at position 2 of the semicolon delimited version
+        string. This substring may include any of the following metadata according to the OpenFV specification:
+
+        - "DEV"
+        - "RELEASE"
+        - "[state]-dev"
+        - "[state]-release"
+
+        See OpenFV specification for State and Status substring definition details (https://github.com/openfv/openfv)
 
         :return: string (Python 3) or unicode (Python 2), empty string if this substring is not set in the font
         """
@@ -472,11 +503,14 @@ class FontVersion(object):
 
     def set_state_git_commit_sha1(self, development=False, release=False):
         """
-        set_state_git_commit_sha1 is a public method that adds a git commit sha1 hash label to the font version string
-        at the second substring position according to the OpenFV font versioning specification format.  This can be
-        combined with a development/release status indicator as part of the substring if the calling code defines
-        either the development or release parameter to a value of True. Note that development and release are mutually
-        exclusive.  ValueError is raised if both are set to True.
+        Public method that adds a git commit sha1 hash label to the font version string at the State metadata position
+        as defined by the OpenFV specification.  This can be combined with a Development/Release Status metadata
+        substring if the calling code defines either the development or release parameter to a value of True.
+        Note that development and release are mutually exclusive.  ValueError is raised if both are set to True.  The
+        font source must be under git version control in order to use this method.  If the font source is not under
+        git version control, an IOError is raised during the attempt to locate the .git directory in the project.
+
+        See OpenFV specification for State substring definition details (https://github.com/openfv/openfv)
 
         :param development: (boolean) False (default) = do not add development status indicator; True = add indicator
 
@@ -509,7 +543,10 @@ class FontVersion(object):
 
     def set_development_status(self):
         """
-        set_development_status is a public method that sets the in memory development status label for the font
+        Public method that sets the in memory Development Status metadata substring for the font version string.
+
+        See OpenFV specification for Status substring and Development status definition details
+        (https://github.com/openfv/openfv)
 
         :return: None
         """
@@ -517,7 +554,10 @@ class FontVersion(object):
 
     def set_release_status(self):
         """
-        set_release_status is a public method that sets the in memory release status label for the font.
+        Public method that sets the in memory Release Status metadata substring for the font version string.
+
+        See OpenFV specification for Status substring and Release status definition details
+        (https://github.com/openfv/openfv)
 
         :return: None
         """
@@ -525,7 +565,11 @@ class FontVersion(object):
 
     def set_version_number(self, version_number):
         """
-        set_version_number is a public method that sets the version number substring with the version_number parameter
+        Public method that sets the version number substring with the version_number parameter.  The version_number
+        parameter should follow the OpenFV specification for the font version number format.
+
+        See OpenFV specification for the font version number definition and semantics details
+        (https://github.com/openfv/openfv)
 
         :param version_number: (string) version number in X.XXX format where X are integers
 
@@ -538,11 +582,11 @@ class FontVersion(object):
 
     def set_version_string(self, version_string):
         """
-        set_version_string is a public method that sets the full version string with a version_string parameter.
-        This is parsed to component substring parts in a semicolon delimited fashion and the full string is maintained
-        in the FontVersion.version_substring_parts Python list
+        Public method that sets the entire version string (including metadata if desired) with a version_string
+        parameter.  The version_string parameter should be formatted according to the OpenFV font versioning
+        specification (https://github.com/openfv/openfv)
 
-        :param version_string: (string) The full semicolon delimited (if necessary) version string
+        :param version_string: (string) The version string with semicolon delimited metadata (if metadata are included)
 
         :return: None
         """
@@ -551,11 +595,14 @@ class FontVersion(object):
 
     def write_version_string(self, fontpath=None):
         """
-        write_version_string is a public method that writes the in memory version substring parts as a joined, semicolon
-        delimited string to the nameID 5 OpenType tables of the font file path that was set at FontVersion instantiation
-        (default) or new fontpath if defined as parameter on method call.
+        Public method that writes the in memory version substring parts as a joined, semicolon delimited string to the
+        nameID 5 OpenType tables of the font file path that was set at FontVersion instantiation (default) or new
+        font file path if the fontpath parameter is defined on the method call.  This method writes to all nameID 5
+        records that were identified during the font binary version string read on instantiation of the FontVersion
+        object.  The write is to a .otf file if the FontVersion object was instantiated from a .otf binary and a .ttf
+        file if the FontVersion object was instantiated from a .ttf binary.
 
-        :param fontpath: (string) optional file path to write out modified font file
+        :param fontpath: (string) optional file path to write out the font version string to a font binary
 
         :return: None
         """
@@ -563,7 +610,7 @@ class FontVersion(object):
         namerecord_list = self.ttf['name'].names
         for record in namerecord_list:
             if record.nameID == 5:
-                # write to fonttools ttLib object name ID 5 table record for each one found in the font
+                # write to fonttools ttLib object name ID 5 table record for each nameID 5 record found in the font
                 record.string = version_string
         # write changes out to the font binary path
         if fontpath is None:
