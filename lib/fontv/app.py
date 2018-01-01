@@ -135,11 +135,11 @@ def main():
             # define new state +/- status metadata substring
             if add_sha1 is True:
                 if add_dev_string is True:
-                    fv.set_git_commit_sha1(development=True)
+                    fv.set_state_git_commit_sha1(development=True)
                 elif add_release_string is True:
-                    fv.set_git_commit_sha1(release=True)
+                    fv.set_state_git_commit_sha1(release=True)
                 else:
-                    fv.set_git_commit_sha1()
+                    fv.set_state_git_commit_sha1()
             else:
                 # define new status metadata substring only
                 if add_dev_string is True:

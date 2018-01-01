@@ -818,12 +818,12 @@ def test_libfv_set_release_method_on_nostatus(metafonts):
 def test_libfv_set_gitsha1_bad_parameters_raises_valueerror(allfonts):
     with pytest.raises(ValueError):
         fv = FontVersion(allfonts)
-        fv.set_git_commit_sha1(development=True, release=True)
+        fv.set_state_git_commit_sha1(development=True, release=True)
 
 
 def test_libfv_set_default_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
-    fv.set_git_commit_sha1()
+    fv.set_state_git_commit_sha1()
     sha_needle = fv.version_string_parts[1]
     assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
     assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
@@ -835,7 +835,7 @@ def test_libfv_set_default_gitsha1_method(allfonts):
 
 def test_libfv_set_development_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
-    fv.set_git_commit_sha1(development=True)
+    fv.set_state_git_commit_sha1(development=True)
     sha_needle = fv.version_string_parts[1]
     assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
     assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
@@ -847,7 +847,7 @@ def test_libfv_set_development_gitsha1_method(allfonts):
 
 def test_libfv_set_release_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
-    fv.set_git_commit_sha1(release=True)
+    fv.set_state_git_commit_sha1(release=True)
     sha_needle = fv.version_string_parts[1]
     assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
     assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
@@ -860,7 +860,7 @@ def test_libfv_set_release_gitsha1_method(allfonts):
 def test_libfv_set_gitsha1_both_dev_release_error(capsys):
     fv = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
     with pytest.raises(ValueError) as pytest_wrapped_e:
-        fv.set_git_commit_sha1(release=True, development=True)
+        fv.set_state_git_commit_sha1(release=True, development=True)
 
     out, err = capsys.readouterr()
     assert pytest_wrapped_e.type == ValueError

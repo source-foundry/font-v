@@ -27,9 +27,9 @@ from fontv.utilities import get_git_root_path
 
 class FontVersion(object):
     """
-    FontVersion is a ttf and otf font version string object that reads a font version string from a font binary,
-    maintains version string state in memory, parses semicolon delimited substrings of the version string, and
-    provides public methods for version string modification and writes back to the font file on disk.
+    FontVersion is a ttf and otf font version string class that provides support for font version string reads,
+    reporting, modification, & writes.  It provides full support for the OpenFV font versioning specification
+    (https://github.com/openfv/openfv).
 
     The class works on Python "strings".  String types indicated below refer to the Python2 unicode type and Python3
     string type.
@@ -470,12 +470,13 @@ class FontVersion(object):
         else:
             return ""
 
-    def set_git_commit_sha1(self, development=False, release=False):
+    def set_state_git_commit_sha1(self, development=False, release=False):
         """
-        set_git_commit_sha1 is a public method that adds a git commit sha1 hash label to the font version string
-        at the second substring position.  This can be combined with a development/release status indicator as part
-        of the substring if the calling code defines either the development or release parameter to a value of True.
-        Note that development and release are mutually exclusive.  ValueError is raised if both are set to True.
+        set_state_git_commit_sha1 is a public method that adds a git commit sha1 hash label to the font version string
+        at the second substring position according to the OpenFV font versioning specification format.  This can be
+        combined with a development/release status indicator as part of the substring if the calling code defines
+        either the development or release parameter to a value of True. Note that development and release are mutually
+        exclusive.  ValueError is raised if both are set to True.
 
         :param development: (boolean) False (default) = do not add development status indicator; True = add indicator
 
@@ -494,7 +495,8 @@ class FontVersion(object):
 
         if development and release:
             raise ValueError("Cannot set both development parameter and release parameter to a value of True in "
-                             "fontv.libfv.FontVersion.set_git_commit_sha1() method.  These are mutually exclusive.")
+                             "fontv.libfv.FontVersion.set_state_git_commit_sha1() method.  These are mutually "
+                             "exclusive.")
 
         if development:   # if request for development status label, append FontVersion.sha1_develop to hash digest
             hash_substring = git_sha1_hash_formatted + self.sha1_develop
