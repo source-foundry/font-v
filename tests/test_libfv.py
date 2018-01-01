@@ -857,6 +857,15 @@ def test_libfv_set_release_gitsha1_method(allfonts):
     assert ("RELEASE" in sha_needle) is False
 
 
+def test_libfv_set_gitsha1_both_dev_release_error(capsys):
+    fv = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
+    with pytest.raises(ValueError) as pytest_wrapped_e:
+        fv.set_git_commit_sha1(release=True, development=True)
+
+    out, err = capsys.readouterr()
+    assert pytest_wrapped_e.type == ValueError
+
+
 def test_libfv_set_version_number(allfonts):
     fv = FontVersion(allfonts)
     prelength = len(fv.version_string_parts)
