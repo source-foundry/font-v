@@ -320,7 +320,6 @@ class FontVersion(object):
         else:
             self.version_string_parts = [version_string]
 
-    # TODO: add tests with state strings
     def _set_state_status_substring(self, state_status_string):
         """
         Private method that sets the status substring (defined as self.version_string_parts[1]) in the
@@ -382,7 +381,6 @@ class FontVersion(object):
         else:
             return False
 
-    # TODO: add tests
     def _is_state_substring_return_state_match(self, needle):
         """
         private method that returns a tuple of boolean, string.  The boolean value reflects the truth test needle is a
@@ -472,7 +470,6 @@ class FontVersion(object):
         else:
             return ""
 
-    # TODO: add tests
     def set_git_commit_sha1(self, development=False, release=False):
         """
         set_git_commit_sha1 is a public method that adds a git commit sha1 hash label to the font version string
@@ -507,8 +504,6 @@ class FontVersion(object):
             hash_substring = git_sha1_hash_formatted
 
         self._set_state_status_substring(hash_substring)
-        # update object attributes with new data
-        self._parse()
 
     def set_development_status(self):
         """
@@ -537,6 +532,7 @@ class FontVersion(object):
         version_number_substring = "Version " + version_number
         self.version_string_parts[0] = version_number_substring
         self.version = self.version_string_parts[0]
+        self._parse()
 
     def set_version_string(self, version_string):
         """
