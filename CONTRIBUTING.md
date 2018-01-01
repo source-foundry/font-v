@@ -9,6 +9,10 @@ Please search the existing issue reports (including open and closed) for a histo
 
 Contributions to the source code are highly encouraged and welcomed!  We recommend that you open a new issue report to discuss a major source code refactor, implementation of a major new feature, or any other major modification that requires an extended amount of time/effort before you invest the time in the work (assuming that the intent is for this to be merged upstream).
 
+#### OpenFV compliance
+
+Work in this project must maintain compliance with the [OpenFV semantic font versioning specification](https://github.com/openfv/openfv).  Please read and understand this specification before you submit revisions for review.  All modifications to source and documentation that lead to elimination of support of any part of the OpenFV specification require modification of the specification itself through the OpenFV repository before proposals for font-v changes will be reviewed.  Please submit a proposal for these changes to the OpenFV repository and await confirmation that your changes are implemented in a new version of the specification before you submit source changes to the font-v project.
+
 #### License
 
 To contribute source code to this project you must be willing to contribute your source changes under the existing [MIT license](https://github.com/source-foundry/font-v/blob/master/docs/LICENSE).
@@ -35,7 +39,7 @@ $ pip install pytest
 To run the `font-v` project tests locally across different Python interpreter versions, use a command like the following from the root of the repository, specifying your target Python interpreter versions:
 
 ```
-$ tox -e py27, py36
+$ tox -e py27,py36
 ```
 
 See the tox documentation for additional details and further information about available Python interpreter versions.
