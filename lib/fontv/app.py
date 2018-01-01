@@ -18,13 +18,11 @@ import os
 import sys
 
 from fontTools.misc.py23 import tounicode, unicode
-from fontTools.misc.encodingTools import getEncoding
-from git import Repo
 
 from fontv import settings
 from fontv.commandlines import Command
 from fontv.libfv import FontVersion
-from fontv.utilities import file_exists, dir_exists, is_font
+from fontv.utilities import file_exists, is_font
 
 
 def main():
@@ -156,114 +154,6 @@ def main():
     else:  # user did not enter an acceptable subcommand
         sys.stderr.write("[font-v] ERROR: Please enter a font-v subcommand with your request." + os.linesep)
         sys.exit(1)
-
-
-class FontVersionObj(object):
-    def __init__(self, font_path, name_id5_record):
-        self.fontpath = font_path
-        self.platformID = name_id5_record.platformID
-        self.platEncID = name_id5_record.platEncID
-        self.langID = name_id5_record.langID
-        self.nameID = name_id5_record.nameID
-        self.version_string = name_id5_record.toUnicode()  # name_id5_record.string cast to str in Py3 / unicode in Py2
-        self.version_parts_list = []
-
-        self._make_version_parts_list()
-
-    def _make_version_parts_list(self):
-        if ";" in self.version_string:
-            self.version_parts_list = self.version_string.split(";")
-        else:
-            self.version_parts_list = [self.version_string]
-
-    def get_repo_commit(self):
-        repo = Repo(get_git_root_path())
-        gitpy = repo.git
-        # git rev-list --abbrev-commit --max-count=1 --format="%h" HEAD - abbreviated unique sha1 for the repository
-        # number of sha1 hex characters determined by git (addresses https://github.com/source-foundry/font-v/issues/2)
-        full_git_sha_string = gitpy.rev_list('--abbrev-commit', '--max-count=1', '--format="%h"', 'HEAD')
-        unicode_full_sha_string = tounicode(full_git_sha_string)
-        sha_string_list = unicode_full_sha_string.split("\n")
-        final_sha_string = sha_string_list[1].replace('"', '')
-        return final_sha_string
-
-    def get_print_string(self):
-        return self.fontpath + ":" + os.linesep + self.version_string
-
-    def get_dev_print_string(self):
-        encoding_str = getEncoding(self.platformID, self.platEncID, self.langID)
-        if encoding_str is None:
-            encoding_str = "unknown"  # if fontTools.misc.encodingTools.getEncoding returns None, encoding not detected
-        recordtype_list = [str(self.platformID), str(self.platEncID), str(self.langID), str(self.nameID)]
-        recordtype_string = "/".join(recordtype_list)
-        print_string = self.fontpath + " [" + recordtype_string + " (encoding='" \
-                                       "" + encoding_str + "')]:" + os.linesep + self.version_string
-        return print_string
-
-    def get_version_string(self):
-        return self.version_parts_list[0]   # anything before first ';' in version string name record
-
-    def get_post_string(self):
-        if len(self.version_parts_list) > 1:
-            filtered_post_list = []   # maintains a list of string parts that pass filters below
-            for part in self.version_parts_list[1:]:
-                if part.strip() in ["DEV", "RELEASE"]:
-                    pass
-                elif part[-4:] == "-dev":
-                    pass
-                elif part[-8:] == "-release":
-                    pass
-                else:
-                    filtered_post_list.append(part)
-            if len(filtered_post_list) > 1:
-                return ";".join(self.version_parts_list[1:])  # return ; delimited string if there were multiple parts
-            elif len(filtered_post_list) == 1:
-                return filtered_post_list[0]               # return the value only if this filter eliminated all but one
-            else:
-                return ""                                 # return empty string if filter removed all other strings
-        elif len(self.version_parts_list) == 2:
-            return self.version_parts_list[1]            # return just the post string if only one post part
-        else:
-            return ""                                   # return empty list if there was no string after version string
-
-
-def get_git_root_path():
-    """
-    Recursively searches for git root path over 4 directory levels above working directory
-    :return: validated git root path as string OR raises SystemExit if not found
-    """
-    try:
-        # begin by defining current working directory as root of git repository
-        unverified_gitroot_path = os.path.abspath('.')
-
-        # check to see if this assumption is correct
-        if dir_exists(os.path.join(unverified_gitroot_path, '.git')):
-            verified_gitroot_path = os.path.join(unverified_gitroot_path, '.git')
-        else:  # if not, recursive search up to three directories above for the git repo root
-            one_level_up = os.path.abspath(os.path.join(unverified_gitroot_path, os.pardir))
-            two_levels_up = os.path.dirname(one_level_up)
-            three_levels_up = os.path.dirname(two_levels_up)
-
-            one_level_up_path = os.path.join(one_level_up, '.git')
-            two_levels_up_path = os.path.join(two_levels_up, '.git')
-            three_levels_up_path = os.path.join(three_levels_up, '.git')
-
-            if dir_exists(one_level_up_path):  # check one directory level up
-                verified_gitroot_path = os.path.dirname(one_level_up_path)
-            elif dir_exists(two_levels_up_path):  # check two directory levels up
-                verified_gitroot_path = os.path.dirname(two_levels_up_path)
-            elif dir_exists(three_levels_up_path):  # check three directory levels up
-                verified_gitroot_path = os.path.dirname(three_levels_up_path)
-            else:
-                sys.stderr.write("[font-v] ERROR: Unable to identify the root of your git repository. "
-                                 "Please try again from the root of your repository." + os.linesep)
-                sys.exit(1)
-    except Exception as e:
-        sys.stderr.write("[font-v] ERROR: Unable to identify the root of your git repository. "
-                         "Please try again from the root of your repository. " + str(e) + os.linesep)
-        sys.exit(1)
-
-    return verified_gitroot_path
 
 
 if __name__ == '__main__':
