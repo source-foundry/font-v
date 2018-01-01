@@ -17,7 +17,6 @@ from __future__ import unicode_literals
 import os
 import sys
 
-from fontTools import ttLib
 from fontTools.misc.py23 import tounicode, unicode
 from fontTools.misc.encodingTools import getEncoding
 from git import Repo
@@ -81,7 +80,6 @@ def main():
         add_dev_string = False
         add_new_version = False
         fontpath_list = []            # list of font paths that user submits on command line
-        version = ""
 
         # test for mutually exclusive arguments
         # do not refactor this below the level of the argument tests that follow
