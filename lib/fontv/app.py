@@ -56,7 +56,7 @@ def main():
                 if file_exists(font_path):
                     fv = FontVersion(font_path)
                     if "--dev" in c.argv:   # --dev switch report prints every version string in name records
-                        for key, value in fv._nameID_5_dict.items():
+                        for key, value in fv.name_ID5_dict.items():
                             devstring = fv.fontpath + " " + str(key) + ":" + os.linesep + fv.get_version_string()
                             print(devstring)
                     else:  # default report handling

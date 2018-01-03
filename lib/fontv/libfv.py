@@ -104,9 +104,9 @@ class FontVersion(object):
         self.sha1_develop = sha1_develop
         self.sha1_release = sha1_release
 
-        self._nameID_5_dict = {}
+        # name.ID = 5 version string substring data
+        self.name_ID5_dict = {}
 
-        # version string substring data
         self.version_string_parts = []  # list of substring items in version string (; delimited parse to list)
         self.version = ""
         self.state = ""
@@ -119,6 +119,9 @@ class FontVersion(object):
         self.contains_status = False
         self.is_development = False
         self.is_release = False
+
+        # head.fontRevision data
+        self.head_fontRevision = ""
 
         # object instantiation method call (truth test values updated in the following method)
         self._read_version_string()
@@ -201,15 +204,15 @@ class FontVersion(object):
             if record.nameID == 5:
                 # map dictionary as {(platformID, platEncID, langID) : version string}
                 recordkey = (record.platformID, record.platEncID, record.langID)
-                self._nameID_5_dict[recordkey] = record.toUnicode()
+                self.name_ID5_dict[recordkey] = record.toUnicode()
 
         # assert that at least one nameID 5 record was obtained from the font in order to instantiate
         # a FontVersion object
-        if len(self._nameID_5_dict) == 0:
+        if len(self.name_ID5_dict) == 0:
             raise IndexError("Unable to read nameID 5 version records from the font " + self.fontpath)
 
         # define the version string from the dictionary
-        for vs in self._nameID_5_dict.values():
+        for vs in self.name_ID5_dict.values():
             version_string = vs
             break  # take the first value that dictionary serves up
 
