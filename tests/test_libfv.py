@@ -287,6 +287,17 @@ def test_libfv_version_string_property_set_on_instantiation_ttfont_object(allfon
     assert fv.version == "Version 1.010"
 
 
+def test_libfv_head_fontrevision_property_set_on_instantiation(allfonts):
+    fv = FontVersion(allfonts)
+    assert fv.head_fontRevision == 1.010
+
+
+def test_libfv_head_fontrevision_property_set_on_instantiation_ttfont_object(allfonts):
+    ttf = TTFont(allfonts)
+    fv = FontVersion(ttf)
+    assert fv.head_fontRevision == 1.010
+
+
 def test_libfv_fontversion_object_parameter_properties_defaults(allfonts):
     fv = FontVersion(allfonts)
     assert fv.develop_string == "DEV"
@@ -578,6 +589,11 @@ def test_libfv_clear_metadata_method(allfonts):
     fv.clear_metadata()
     assert len(fv.version_string_parts) == 1
     assert fv.version_string_parts[0] == "Version 1.010"
+
+
+def test_libfv_get_head_fontrevision_method(allfonts):
+    fv = FontVersion(allfonts)
+    assert fv.get_head_fontrevision_version_number() == 1.010
 
 
 def test_libfv_get_metadata_method():
