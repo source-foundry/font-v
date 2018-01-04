@@ -192,12 +192,13 @@ class FontVersion(object):
 
     def _read_version_string(self):
         """
-        Private method that reads OpenType name table ID 5 data from a fontTools.ttLib.ttFont object and sets
-        FontVersion object properties.  The method is called on instantiation of a FontVersion object
+        Private method that reads OpenType name ID 5 and head.fontRevision record data from a fontTools.ttLib.ttFont
+        object and sets FontVersion object properties.  The method is called on instantiation of a FontVersion object
 
         :return: None
         """
 
+        # Read the name.ID=5 record
         namerecord_list = self.ttf['name'].names
         # read in name records
         for record in namerecord_list:
@@ -221,6 +222,9 @@ class FontVersion(object):
 
         # define version as first substring
         self.version = self.version_string_parts[0]
+
+        # Read the head.fontRevision record (stored as a float)
+        self.head_fontRevision = self.ttf['head'].fontRevision
 
         self._parse()  # update FontVersion object attributes based upon the data read in
 
@@ -459,6 +463,14 @@ class FontVersion(object):
             return tuple(version_number_int_list)
         else:
             return None
+
+    def get_head_fontrevision_version_number(self):
+        """
+        Public method that returns the version number that is parsed from head.fontRevision record as a float value.
+
+        :return: float
+        """
+        return self.head_fontRevision
 
     def get_version_string(self):
         """
