@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#     font-v──────────────────────────────────────────────────────────────────┐
-#     │                                                                       │
-#     │ A font version string reporting and modification tool                 │
-#     │                                                                       │
-#     │ Copyright 2018 Christopher Simpkins                                   │
-#     │ MIT License                                                           │
-#     │                                                                       │
-#     │ Source: https://github.com/source-foundry/font-v                      │
-#     │                                                                       │
-#     └───────────────────────────────────────────────────────────────────────┘
+#     font-v────────────────────────────────────────────────────────┐
+#     │                                                             │
+#     │ A font version string reporting and modification tool       │
+#     │                                                             │
+#     │ Copyright 2018 Christopher Simpkins                         │
+#     │ MIT License                                                 │
+#     │                                                             │
+#     │ Source: https://github.com/source-foundry/font-v            │
+#     │                                                             │
+#     └─────────────────────────────────────────────────────────────┘
 
 from __future__ import unicode_literals
 
@@ -55,12 +55,17 @@ def main():
                 font_path = arg
                 if file_exists(font_path):
                     fv = FontVersion(font_path)
+                    print(os.linesep + fv.fontpath + ":")
+                    print("----- name.ID = 5:")
                     if "--dev" in c.argv:   # --dev switch report prints every version string in name records
                         for key, value in fv.name_ID5_dict.items():
-                            devstring = fv.fontpath + " " + str(key) + ":" + os.linesep + fv.get_version_string()
+                            devstring = str(key) + ":" + os.linesep + fv.get_version_string()
                             print(devstring)
                     else:  # default report handling
-                        print(fv.fontpath + ":" + os.linesep + fv.get_version_string())
+                        print(fv.get_version_string())
+                    print("----- head.fontRevision:")
+                    head_fontrevision = fv.get_head_fontrevision_version_number()
+                    print("{:.3f}".format(head_fontrevision))
                 else:
                     sys.stderr.write("[font-v] ERROR: " + font_path + " does not appear to be a valid ttf "
                                                                       "or otf font file path." + os.linesep)
