@@ -166,10 +166,14 @@ Version 1.000;RELEASE
 Include the `--sha1` flag with either the `--dev` or `--rel` flag in the command to include both status and state metadata to the version string:
 
 ```
-$ git write --sha1 --dev Example-Regular.ttf
-$ git report Example-Regular.ttf
+$ font-v write --sha1 --dev Example-Regular.ttf
+$ font-v report Example-Regular.ttf
+
 Example-Regular.ttf:
+----- name.ID = 5:
 Version 1.000;[cf8dc25]-dev
+----- head.fontRevision:
+1.000
 ```
 
 or 
@@ -177,8 +181,12 @@ or
 ```
 $ git write --sha1 --rel Example-Regular.ttf
 $ git report Example-Regular.ttf
+
 Example-Regular.ttf:
+----- name.ID = 5:
 Version 1.000;[cf8dc25]-release
+----- head.fontRevision:
+1.000
 ```
 
 Any data that followed the original version number substring are maintained and appended after the status metadata in a semicolon delimited format.
