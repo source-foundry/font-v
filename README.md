@@ -5,9 +5,9 @@
 
 ## About
 
-font-v is an open source font version string library (`libfv`) and executable (`font-v`) for reading, reporting, modifying, and writing OpenType name table name ID 5 records (i.e. version string records) in `*.otf` and `*.ttf` fonts.  It provides support for the [OpenFV semantic font versioning specification](https://github.com/openfv/openfv).
+font-v is an open source font version string library (`libfv`) and executable (`font-v`) for reading, reporting, modifying, and writing OpenType name table ID 5 records and head table fontRevision records in `*.otf` and `*.ttf` fonts.  The application provides support for the [OpenFV semantic font versioning specification](https://github.com/openfv/openfv).
 
-font-v is built with Python and can be used on Linux, macOS, and Windows platforms with Python 2 and Python 3 interpreters.
+font-v is built with Python and can be used on Linux, macOS, and Windows platforms with current versions of the Python 2 and Python 3 interpreters.
 
 ## Contents
 - [Installation](#installation)
@@ -49,18 +49,37 @@ $ font-v [subcommand] (options) [font path 1] ([font path ...])
 
 ### Available subcommands and options
 
-- `report` - report OpenType name table nameID 5 record
-	- `--dev` - include all nameID 5 x platformID records in report
-- `write` - modify the version string with the following options:
-	- `--dev` - add development status metadata to the version string (mutually exclusive with `--rel`)
-	- `--rel` -  add release status metadata to the version string (mutually exclusive with `--dev`)
-	- `--sha1` - add git commit sha1 short hash state metadata to the version string (requires source under git version control)
-	- `--ver=[version #]` - modify current version number with a new version number using `1.000`, `1_000` or `1-000` command line definition formatting (the latter two formats are provided to support definitions in shells where the period is a special shell character)
+#### Subcommands
 
+#### `report`
+
+Report OpenType name table ID 5 and head table fontRevision records
+
+**_Option_**:
+
+- `--dev` - include all name table ID 5 x platformID records in report
+
+#### `write`
+
+Write version number to head table fontRevision records and version string to name table ID 5 records.  
+
+**_Options_**:
+
+The following option is used with `write` to modify the version number in both the head fontRevision record and the name ID 5 record(s):
+
+- `--ver=[version #]` - modify current version number with a new version number using `1.000`, `1_000` or `1-000` syntax on the command line (the latter two formats are provided to support definitions in shells where the period is a special shell character)
+
+The following options can be used with `write` to modify the version string in name ID 5:
+
+- `--dev` - add development status metadata to the version string (mutually exclusive with `--rel`)
+- `--rel` -  add release status metadata to the version string (mutually exclusive with `--dev`)
+- `--sha1` - add git commit sha1 short hash state metadata to the version string (requires source under git version control)
+
+### Examples
 
 ### Version string reporting with `report`
 
-Enter the following to display the font version string for the font Example-Regular.ttf:
+Enter the following to display the head fontRevision version number and name ID 5 font version string for the font Example-Regular.ttf:
 
 ```
 $ font-v report Example-Regular.ttf
@@ -73,6 +92,8 @@ $ font-v report --dev Example-Regular.ttf
 ```
 
 ### Version number modification with `write`
+
+The name ID 5 record(s) and head fontRevision record are modified when `--ver=` is used in your command.
 
 Enter the desired version number in `MAJOR.MINOR` format after the `--ver=` flag. Support is provided for the intended period glyph to be replaced in the command with an underscore `_` or dash `-` for users on platforms where the period is a special shell character.
 
@@ -96,7 +117,7 @@ The font version number format should follow the [OpenFV specification](https://
 
 ### git SHA1 commit short hash state metadata with `write`
 
-If your typeface source is under git version control, you can stamp the font binary version string with a short (generally n=7-8 characters, a number that is determined in order to confirm that it represents a unique value for the repository commit) SHA1 hash digest that represents the git commit at the HEAD of the active git branch.  The git commit SHA1 hash digest is defined by the `git rev-list` command at the HEAD of your active repository branch and will match the initial n characters of the git commit SHA1 hash digest that is displayed when you review your `git log` (or review the commit hashes in the UI of git repository hosting platforms like Github).  This is intended to maintain metadata in the font binary about source code state at build time. Formatting of this state substring is defined according to the [OpenFV definition of the State metadata substring](https://github.com/openfv/openfv).
+If your typeface source is under git version control, you can stamp the name ID 5 version string with a short SHA1 hash digest (generally n=7-8 characters, a number that is determined in order to confirm that it represents a unique value for the repository commit) that represents the git commit at the HEAD of the active git branch.  The git commit SHA1 hash digest is defined by the `git rev-list` command at the HEAD of your active repository branch and will match the initial n characters of the git commit SHA1 hash digest that is displayed when you review your `git log` (or review the commit hashes in the UI of git repository hosting platforms like Github).  This is intended to maintain metadata in the font binary about source code state at build time. Formatting of this state substring is defined according to the [OpenFV definition of the State metadata substring](https://github.com/openfv/openfv).
 
 Use the `--sha1` option with the `write` subcommand like this:
 
@@ -112,9 +133,11 @@ Version 1.000;[cf8dc25]
 
 This can be combined with other options (e.g. to modify the version number +/- add development or release status metadata) in the same command.  Other metadata are maintained and appended to the revised version string in a semicolon delimited format with this modification.
 
+This option does not modify the head fontRevision record.
+
 ### Add development / release status metadata with `write`
 
-You can modify the version string to indicate that a build is intended as a development build or release build with the `--dev` or `--rel` flag.  These are mutually exclusive options.  Include only one in your command.
+You can modify the name ID 5 version string to indicate that a build is intended as a development build or release build with the `--dev` or `--rel` flag.  These are mutually exclusive options.  Include only one in your command.
 
 To add development status metadata, use a command like this:
 
@@ -160,11 +183,13 @@ Version 1.000;[cf8dc25]-release
 
 Any data that followed the original version number substring are maintained and appended after the status metadata in a semicolon delimited format.
 
+These options do not modify the head fontRevision record.
+
 ## libfv Usage
 
-The libfv Python library exposes the `FontVersion` object along with an associated set of attributes and public methods for reads, modifications, and writes of `.otf` and `.ttf` font version strings.
+The libfv Python library exposes the `FontVersion` object along with an associated set of attributes and public methods for reads, modifications, and writes of the OpenType head fontRevision record version number and the name ID 5 record(s) version string.  The `font-v` executable is built on the public methods available in this library.
 
-The library supports the [OpenFV semantic font versioning specification](https://github.com/openfv/openfv) and provides built-in OpenFV compliant parsing and formatting of the Version Number substring, State Metadata substring, Status Metadata substring, and Other Metadata substrings as defined in the specification. Font builds that follow the OpenFV specification are, by definition, in compliance with the OpenType name table nameID 5 record (OpenType version string) specification.  Full details are available at the OpenFV repository link above.
+The library supports the [OpenFV semantic font versioning specification](https://github.com/openfv/openfv) and provides built-in OpenFV compliant parsing and formatting of the Version Number substring, State Metadata substring, Status Metadata substring, and Other Metadata substrings (name table ID 5 record) and font version number (head table fontRevision record) as defined in the specification. Font builds that follow the OpenFV specification are, by definition, in compliance with the OpenType name table ID 5 and head fontRevision record  specifications.  Full details are available at the OpenFV repository link above.
 
 Full documentation of the libfv API is available at http://font-v.readthedocs.io/
 
@@ -201,16 +226,23 @@ Note that all modifications to the version string are made in memory. File write
 
 #### Read/write version string
 
-You can examine the full version string in memory (including after modifications that you make with calling code) with the following:
+You can examine the full name ID 5 version string in memory (including after modifications that you make with calling code) with the following:
 
-##### Get version string (including associated metadata)
+##### Get name ID 5 version string (including associated metadata)
 
 ```python
 fv = FontVersion("path/to/font")
 vs = fv.get_version_string()
 ```
 
-All modifications with the public methods are made in memory.  When you are ready to write them out to a font file, call the following method:
+##### Get head fontRevision version number
+
+```python
+fv = FontVersion("path/to/font")
+vs = fv.get_head_fontrevision_version_number()
+```
+
+All version modifications with the public methods are made in memory.  When you are ready to write them out to a font file, call the following method:
 
 ##### Write version string modifications to font file
 
@@ -227,6 +259,8 @@ fv.write_version_string(fontpath="path/to/differentfont") # writes to a differen
 
 ##### Test version equality / inequality
 
+Compare name table ID 5 record equality between two fonts:
+
 ```python
 fv1 = FontVersion("path/to/font1")
 fv2 = FontVersion("path/to/font2")
@@ -241,12 +275,16 @@ Some common font version string modification tasks that are supported by the `li
 
 ##### Set version number
 
+Set the version number in the name ID 5 and head fontRevision records:
+
 ```python
 fv = FontVersion("path/to/font")
 fv.set_version_number("1.001")
 ```
 
 ##### Set entire version string with associated metadata
+
+Set the full version string in the name ID 5 record.  The version number is parsed and used to define the head fontRevision record.
 
 ```python
 fv = FontVersion("path/to/font")
@@ -270,6 +308,8 @@ print(vno2)
 
 ##### Eliminate all metadata from a version string
 
+Remove all metadata from the version string:
+
 ```python
 fv = FontVersion("path/to/font")
 # pre modification version string = "Version 1.000; some metadata; other metadata"
@@ -277,20 +317,26 @@ fv.clear_metadata()
 # post modification version string = "Version 1.000"
 ```
 
+Metadata are defined according the [OpenFV versioning specification](https://github.com/openfv/openfv).
+
 ##### Set development/release status metadata of the font build
+
+Add a development/release status substring to the name ID 5 record:
 
 ```python
 fv = FontVersion("path/to/font")
 # Label as development build
 fv.set_development_status()
-# adds `DEV` status metadata to version string
+# --> adds `DEV` status metadata to version string
 
 # Label as release build
 fv.set_release_status()
-# adds `RELEASE` status metadata to version string
+# --> adds `RELEASE` status metadata to version string
 ```
 
 ##### Set git commit SHA1 hash state metadata to maintain documentation of build time source state
+
+Add source code state metadata to the name ID 5 record:
 
 ```python
 fv = FontVersion("path/to/font")
