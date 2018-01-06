@@ -334,6 +334,8 @@ class FontVersion(object):
         else:
             self.version_string_parts = [version_string]
 
+        self.version = self.version_string_parts[0]
+
     def _set_state_status_substring(self, state_status_string):
         """
         Private method that sets the State/Status substring in the FontVersion.version_string_parts[1] list position.
@@ -433,6 +435,18 @@ class FontVersion(object):
         """
         self.version_string_parts = [self.version_string_parts[0]]
         self._parse()
+
+    def get_version_number_string(self):
+        """
+        Public method that returns a string of the version number in XXX.XXX format.
+
+        :return: (string) the version number.  Empty string if unable to parse version number format
+        """
+        match = re.search(r"\d{1,3}\.\d{1,3}", self.version)
+        if match:
+            return match.group(0)
+        else:
+            return ""
 
     def get_version_number_tuple(self):
         """
@@ -632,4 +646,3 @@ class FontVersion(object):
             self.ttf.save(self.fontpath)
         else:
             self.ttf.save(fontpath)
-

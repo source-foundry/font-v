@@ -1,5 +1,19 @@
 ## Changelog
 
+### v0.6.0
+
+font-v changes:
+
+- added head.fontRevision reporting to default report output
+
+libfv changes:
+
+- added support for head.fontRevision read/writes
+- added new public FontVersion class attribute head_fontRevision
+- added new public FontVersion method get_head_fontrevision_version_number
+- added new public FontVersion method get_version_number_string
+- refactor nameID 5 class attribute dictionary name
+
 ### v0.5.0
 
 font-v executable changes:

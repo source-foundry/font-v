@@ -668,6 +668,19 @@ def test_libfv_is_state_substring_return_match_invalid():
     assert state_substring == ""
 
 
+def test_libfv_get_version_number_string(allfonts):
+    fv = FontVersion(allfonts)
+    assert fv.get_version_number_string() == "1.010"
+
+
+def test_libfv_get_version_number_string_bad_version_number():
+    fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
+    # mock a bad version number substring
+    fv.set_version_number("x.xxx")
+    response = fv.get_version_number_string()
+    assert len(response) == 0
+
+
 def test_libfv_get_version_number_tuple():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
     assert fv.get_version_number_tuple() == (1, 0, 1, 0)
