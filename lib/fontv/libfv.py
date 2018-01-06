@@ -120,8 +120,8 @@ class FontVersion(object):
         self.is_development = False
         self.is_release = False
 
-        # head.fontRevision data
-        self.head_fontRevision = ""
+        # head.fontRevision data.  float type
+        self.head_fontRevision = 0.0
 
         # object instantiation method call (truth test values updated in the following method)
         self._read_version_string()
@@ -600,13 +600,16 @@ class FontVersion(object):
         See OpenFV specification for the font version number definition and semantics details
         (https://github.com/openfv/openfv)
 
+        The method will raise ValueError if the version_string cannot be cast to a float type.
+
         :param version_number: (string) version number in X.XXX format where X are integers
 
         :return: None
         """
         version_number_substring = "Version " + version_number
         self.version_string_parts[0] = version_number_substring
-        self.version = self.version_string_parts[0]
+        self.version = self.version_string_parts[0]                # "Version X.XXX"
+        self.head_fontRevision = float(version_number)             # X.XXX
         self._parse()
 
     def set_version_string(self, version_string):
@@ -615,33 +618,46 @@ class FontVersion(object):
         parameter.  The version_string parameter should be formatted according to the OpenFV font versioning
         specification (https://github.com/openfv/openfv)
 
+        The method will raise a ValueError if the version number used in the version_string cannot be cast to a
+        float type.
+
         :param version_string: (string) The version string with semicolon delimited metadata (if metadata are included)
 
         :return: None
         """
         self._parse_version_substrings(version_string)
         self._parse()
+        self.head_fontRevision = float(self.get_version_number_string())
 
     def write_version_string(self, fontpath=None):
         """
-        Public method that writes the in memory version substring parts as a joined, semicolon delimited string to the
-        nameID 5 OpenType tables of the font file path that was set at FontVersion instantiation (default) or new
-        font file path if the fontpath parameter is defined on the method call.  This method writes to all nameID 5
-        records that were identified during the font binary version string read on instantiation of the FontVersion
-        object.  The write is to a .otf file if the FontVersion object was instantiated from a .otf binary and a .ttf
-        file if the FontVersion object was instantiated from a .ttf binary.
+        Public method that writes the in memory version substring parts as a joined, semicolon delimited string to the:
+
+        (1) each OpenType name table ID 5 record in original font file with full version string, includes all substrings
+        (2) head table fontRevision record with the version number
+
+
+        The write is to a .otf file if the FontVersion object was instantiated from a .otf binary and a .ttf
+        file if the FontVersion object was instantiated from a .ttf binary.  By default the write is to the same
+        file path that was used for instantiation of the FontVersion object.  This write default can be modified by
+        passing a new file path parameter in the fontpath parameter.
 
         :param fontpath: (string) optional file path to write out the font version string to a font binary
 
         :return: None
         """
+        # Write to name table ID 5 record
         version_string = self.get_version_string()
         namerecord_list = self.ttf['name'].names
         for record in namerecord_list:
             if record.nameID == 5:
                 # write to fonttools ttLib object name ID 5 table record for each nameID 5 record found in the font
                 record.string = version_string
-        # write changes out to the font binary path
+
+        # Write version number to head table fontRevision record
+        self.ttf['head'].fontRevision = self.head_fontRevision
+
+        # Write changes out to the font binary path
         if fontpath is None:
             self.ttf.save(self.fontpath)
         else:

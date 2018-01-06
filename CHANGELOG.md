@@ -4,7 +4,8 @@
 
 font-v changes:
 
-- added head.fontRevision reporting to default report output
+- added head table fontRevision record reporting to report subcommand output (default)
+- added head table fontRevision record write support to write subcommand (default)
 
 libfv changes:
 
@@ -12,6 +13,9 @@ libfv changes:
 - added new public FontVersion class attribute head_fontRevision
 - added new public FontVersion method get_head_fontrevision_version_number
 - added new public FontVersion method get_version_number_string
+- updated public FontVersion method set_version_number with head.fontRevision record write support
+- updated public FontVersion method set_version_string with head.fontRevision record write support
+- updated public FontVersion method write_version_string with head.fontRevision record write support
 - refactor nameID 5 class attribute dictionary name
 
 ### v0.5.0
