@@ -34,12 +34,13 @@ Include a subcommand and desired options in your command line request:
 
 Subcommands and options:
 
- report - report OpenType name table nameID 5 record (default: single record)
-    --dev - include all nameID 5 x platformID records in report
+ report - report OpenType name table ID 5 and head table fontRevision records
+    --dev - include all name table ID 5 x platformID records in report
     
- write - modify the version string with the following options:
-   --dev - add development status metadata (mutually exclusive with --rel)
-   --rel -  add release status metadata (mutually exclusive with --dev)
+ write - write version number to head table fontRevision records and
+         version string to name table ID 5 records with the following options:
+   --dev  - add development status metadata (mutually exclusive with --rel)
+   --rel  - add release status metadata (mutually exclusive with --dev)
    --sha1 - add git commit sha1 short hash state metadata
    --ver=[version #] - change version number to `version #` definition
 
@@ -47,8 +48,9 @@ NOTES:
 
 The write subcommand --dev and --rel flags are mutually exclusive. Include up to one of these options.
 
-For platforms that treat the period as a special shell character, the --ver=[version #] an underscore or dash glyph can be used in place of a period to define the version number on the command line.  For example, 2.001 can be defined with either of the following:
+For platforms that treat the period as a special shell character, an underscore or dash glyph can be used in place of a period to define the version number on the command line with the `--ver=[version #]` option.  This means that 2.001 can be defined with any of the following:
 
+   $ font-v write --ver=2.001
    $ font-v write --ver=2_001
    $ font-v write --ver=2-001
    
