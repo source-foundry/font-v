@@ -6,6 +6,7 @@ font-v changes:
 
 - added head table fontRevision record reporting to report subcommand output (default)
 - added head table fontRevision record write support to write subcommand (default)
+- updated in-application help documentation
 
 libfv changes:
 
