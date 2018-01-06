@@ -38,11 +38,14 @@ Subcommands and options:
     --dev - include all name table ID 5 x platformID records in report
     
  write - write version number to head table fontRevision records and
-         version string to name table ID 5 records with the following options:
-   --dev  - add development status metadata (mutually exclusive with --rel)
-   --rel  - add release status metadata (mutually exclusive with --dev)
-   --sha1 - add git commit sha1 short hash state metadata
-   --ver=[version #] - change version number to `version #` definition
+         version string to name table ID 5 records.  The following options
+         can be used to modify the version string write:
+   head fontRevision + name ID 5 option:
+     --ver=[version #] - change version number to `version #` definition
+   name ID 5 options:
+     --dev  - add development status metadata (mutually exclusive with --rel)
+     --rel  - add release status metadata (mutually exclusive with --dev)
+     --sha1 - add git commit sha1 short hash state metadata
 
 NOTES:
 
