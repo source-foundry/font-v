@@ -558,7 +558,7 @@ def test_libfv_fontversion_object_str_method(allfonts):
     fv = FontVersion(allfonts)
     test_string = fv.__str__()
     assert test_string.startswith("<fontv.libfv.FontVersion> ") is True
-    assert fv.get_version_string() in test_string
+    assert fv.get_name_id5_version_string() in test_string
     assert fv.fontpath in test_string
 
 
@@ -715,20 +715,20 @@ def test_libfv_get_version_number_tuple_bad_version_number():
     assert fv.get_version_number_tuple() is None
 
 
-def test_libfv_get_version_string_method():
+def test_libfv_get_name_id5_version_string_method():
     fv1 = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
     fv2 = FontVersion("tests/testfiles/Test-VersionMeta.ttf")
     fv3 = FontVersion("tests/testfiles/Test-VersionMoreMeta.ttf")
-    assert fv1.get_version_string() == "Version 1.010"
-    assert fv2.get_version_string() == "Version 1.010;metadata string"
-    assert fv3.get_version_string() == "Version 1.010;metadata string;another metadata string"
+    assert fv1.get_name_id5_version_string() == "Version 1.010"
+    assert fv2.get_name_id5_version_string() == "Version 1.010;metadata string"
+    assert fv3.get_name_id5_version_string() == "Version 1.010;metadata string;another metadata string"
 
     fv4 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
     fv5 = FontVersion("tests/testfiles/Test-VersionMeta.otf")
     fv6 = FontVersion("tests/testfiles/Test-VersionMoreMeta.otf")
-    assert fv4.get_version_string() == "Version 1.010"
-    assert fv5.get_version_string() == "Version 1.010;metadata string"
-    assert fv6.get_version_string() == "Version 1.010;metadata string;another metadata string"
+    assert fv4.get_name_id5_version_string() == "Version 1.010"
+    assert fv5.get_name_id5_version_string() == "Version 1.010;metadata string"
+    assert fv6.get_name_id5_version_string() == "Version 1.010;metadata string;another metadata string"
 
 
 def test_libfv_set_development_method_on_versiononly():

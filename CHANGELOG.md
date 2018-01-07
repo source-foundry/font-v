@@ -6,6 +6,7 @@ font-v changes:
 
 - added head table fontRevision record reporting to report subcommand output (default)
 - added head table fontRevision record write support to write subcommand (default)
+- refactored from deprecated libfv.FontVersion.get_version_string to new libfv.FontVersion.get_name_id5_version_string method
 - updated in-application help documentation
 
 libfv changes:
@@ -14,6 +15,8 @@ libfv changes:
 - added new public FontVersion class attribute head_fontRevision
 - added new public FontVersion method get_head_fontrevision_version_number
 - added new public FontVersion method get_version_number_string
+- add new public FontVersion method get_name_id5_version_string (to replace get_version_string)
+- deprecated FontVersion method get_version_string (warnings added as of this release)
 - updated public FontVersion method set_version_number with head.fontRevision record write support
 - updated public FontVersion method set_version_string with head.fontRevision record write support
 - updated public FontVersion method write_version_string with head.fontRevision record write support

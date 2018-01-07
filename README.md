@@ -234,13 +234,13 @@ Note that all modifications to the version string are made in memory. File write
 
 #### Read/write version string
 
-You can examine the full name ID 5 version string in memory (including after modifications that you make with calling code) with the following:
+You can examine the full name ID 5 version string and the head fontRevision version number in memory (including after modifications that you make with calling code) with the following:
 
 ##### Get name ID 5 version string (including associated metadata)
 
 ```python
 fv = FontVersion("path/to/font")
-vs = fv.get_version_string()
+vs = fv.get_name_id5_version_string()
 ```
 
 ##### Get head fontRevision version number

@@ -17,6 +17,7 @@ from __future__ import unicode_literals
 
 import os
 import re
+import warnings
 
 from fontTools import ttLib
 from fontTools.misc.py23 import tounicode, unicode
@@ -154,7 +155,7 @@ class FontVersion(object):
 
         :return: (string)
         """
-        return "<fontv.libfv.FontVersion> " + os.linesep + self.get_version_string() + os.linesep + "file path:" \
+        return "<fontv.libfv.FontVersion> " + os.linesep + self.get_name_id5_version_string() + os.linesep + "file path:" \
                " " + self.fontpath
 
     # TODO: confirm comparisons of version numbers like "Version 1.001", "Version 1.01", "Version 1.1" as not the same
@@ -488,6 +489,16 @@ class FontVersion(object):
 
     def get_version_string(self):
         """
+        DEPRECATED: Please convert to use of FontVersion.get_name_id5_version_string() method
+        """
+        warnings.simplefilter('always')
+        warnstring = "[WARNING] FontVersion.get_version_string is a deprecated method.  Please convert to " \
+                     "FontVersion.get_name_id5_version_string."
+        warnings.warn(warnstring, DeprecationWarning, stacklevel=2)
+        return ";".join(self.version_string_parts)
+
+    def get_name_id5_version_string(self):
+        """
         Public method that returns the full version string as the joined contents of the
         FontVersion.version_string_parts Python list.  It is joined with semicolon delimiters and returned as a
         Python 2 unicode object or Python 3 string object based upon the Python interpreter in use.
@@ -647,7 +658,7 @@ class FontVersion(object):
         :return: None
         """
         # Write to name table ID 5 record
-        version_string = self.get_version_string()
+        version_string = self.get_name_id5_version_string()
         namerecord_list = self.ttf['name'].names
         for record in namerecord_list:
             if record.nameID == 5:
