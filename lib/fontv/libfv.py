@@ -487,6 +487,7 @@ class FontVersion(object):
         """
         return self.head_fontRevision
 
+    # TODO: remove this deprecated method (warning added in v0.6.0 release)
     def get_version_string(self):
         """
         DEPRECATED: Please convert to use of FontVersion.get_name_id5_version_string() method
