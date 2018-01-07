@@ -441,7 +441,7 @@ class FontVersion(object):
         """
         Public method that returns a string of the version number in XXX.XXX format.
 
-        :return: (string) the version number.  Empty string if unable to parse version number format
+        :return: string (Python 3) or unicode (Python 2).  Empty string if unable to parse version number format
         """
         match = re.search(r"\d{1,3}\.\d{1,3}", self.version)
         if match:
