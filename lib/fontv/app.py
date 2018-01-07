@@ -58,11 +58,11 @@ def main():
                     print(os.linesep + fv.fontpath + ":")
                     print("----- name.ID = 5:")
                     if "--dev" in c.argv:   # --dev switch report prints every version string in name records
-                        for key, value in fv.name_ID5_dict.items():
-                            devstring = str(key) + ":" + os.linesep + fv.get_version_string()
+                        for record, v_string in fv.name_ID5_dict.items():
+                            devstring = str(record) + ":" + os.linesep + str(v_string)
                             print(devstring)
                     else:  # default report handling
-                        print(fv.get_version_string())
+                        print(fv.get_name_id5_version_string())
                     print("----- head.fontRevision:")
                     head_fontrevision = fv.get_head_fontrevision_version_number()
                     print("{:.3f}".format(head_fontrevision))
@@ -155,7 +155,7 @@ def main():
             fv.write_version_string()
 
             print("[✓] " + fontpath + " version string was successfully changed "
-                  "to:" + os.linesep + fv.get_version_string() + os.linesep)
+                  "to:" + os.linesep + fv.get_name_id5_version_string() + os.linesep)
     else:  # user did not enter an acceptable subcommand
         sys.stderr.write("[font-v] ERROR: Please enter a font-v subcommand with your request." + os.linesep)
         sys.exit(1)
