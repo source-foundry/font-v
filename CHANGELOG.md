@@ -1,5 +1,11 @@
 ## Changelog
 
+### v0.6.1
+
+- added pin for fontTools dependency at version 3.21.2
+- added pin for gitpython dependency at version 2.1.8
+- updated PyPI documentation
+
 ### v0.6.0
 
 font-v executable changes:
