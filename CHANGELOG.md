@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.6.2
+
+- updated fontTools dependency to v3.22.0
+
 ### v0.6.1
 
 - added pin for fontTools dependency at version 3.21.2
