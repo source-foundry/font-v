@@ -11,7 +11,7 @@ lib_name = 'font-v'
 # ------------------------------------------------------------------------------
 major_version = "0"
 minor_version = "6"
-patch_version = "1"
+patch_version = "2"
 
 # ------------------------------------------------------------------------------
 # Help String
@@ -36,7 +36,7 @@ Subcommands and options:
 
  report - report OpenType name table ID 5 and head table fontRevision records
     --dev - include all name table ID 5 x platformID records in report
-    
+
  write - write version number to head table fontRevision records and
          version string to name table ID 5 records.  The following options
          can be used to modify the version string write:
@@ -56,7 +56,7 @@ For platforms that treat the period as a special shell character, an underscore 
    $ font-v write --ver=2.001
    $ font-v write --ver=2_001
    $ font-v write --ver=2-001
-   
+
 You can include version number, status, and state options in the same request to make all of these modifications simultaneously.
 
 The write subcommand modifies all nameID 5 records identified in the OpenType name table of the font (i.e. across all platformID).
