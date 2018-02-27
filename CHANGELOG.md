@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.6.3
+
+- updated fontTools dependency to v3.23.0 - includes library bugfix
+
 ### v0.6.2
 
 - updated fontTools dependency to v3.22.0
