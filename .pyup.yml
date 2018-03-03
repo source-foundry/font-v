@@ -4,7 +4,7 @@
 # update schedule
 # default: empty
 # allowed: "every day", "every week", ..
-schedule: "every day"
+schedule: "every week"
 
 # set the default branch
 # default: empty, the default branch on GitHub
