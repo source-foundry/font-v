@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.6.5
+
+- updated fontTools dependency to v3.25.0
+- updated gitpython dependency to v2.1.9
+
 ### v0.6.4
 
 - updated fontTools dependency to v3.24.1
