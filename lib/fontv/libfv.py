@@ -89,11 +89,20 @@ class FontVersion(object):
 
     :raises: IOError if fontpath does not exist
     """
-    def __init__(self, font, develop="DEV", release="RELEASE", sha1_develop="-dev", sha1_release="-release"):
+
+    def __init__(
+        self,
+        font,
+        develop="DEV",
+        release="RELEASE",
+        sha1_develop="-dev",
+        sha1_release="-release",
+    ):
         try:
             # assume that it is a ttLib.TTFont object and attempt to call object attributes
             self.fontpath = font.reader.file.name
-            self.ttf = font     # if it does not raise AttributeError, we guessed correctly, can set the ttf attr here
+            # if it does not raise AttributeError, we guessed correctly, can set the ttf attr here
+            self.ttf = font
         except AttributeError:
             # if above attempt to call TTFont attribute raises AttributeError (as it would with string file path)
             # then instantiate a ttLib.TTFont object and define the fontpath attribute with the file path string
@@ -155,8 +164,14 @@ class FontVersion(object):
 
         :return: (string)
         """
-        return "<fontv.libfv.FontVersion> " + os.linesep + self.get_name_id5_version_string() + os.linesep + "file path:" \
-               " " + self.fontpath
+        return (
+            "<fontv.libfv.FontVersion> "
+            + os.linesep
+            + self.get_name_id5_version_string()
+            + os.linesep
+            + "file path:"
+            " " + self.fontpath
+        )
 
     # TODO: confirm comparisons of version numbers like "Version 1.001", "Version 1.01", "Version 1.1" as not the same
     # TODO:   before this is released.  Will need to be documented as such because this is not obvious behavior
@@ -187,9 +202,9 @@ class FontVersion(object):
         :return: None
         """
         # metadata parsing
-        self._parse_metadata()         # parse the metadata
-        self._parse_state()            # parse the state substring data
-        self._parse_status()           # parse the version substring dev/rel status indicator data
+        self._parse_metadata()  # parse the metadata
+        self._parse_state()  # parse the state substring data
+        self._parse_status()  # parse the version substring dev/rel status indicator data
 
     def _read_version_string(self):
         """
@@ -200,7 +215,7 @@ class FontVersion(object):
         """
 
         # Read the name.ID=5 record
-        namerecord_list = self.ttf['name'].names
+        namerecord_list = self.ttf["name"].names
         # read in name records
         for record in namerecord_list:
             if record.nameID == 5:
@@ -211,7 +226,9 @@ class FontVersion(object):
         # assert that at least one nameID 5 record was obtained from the font in order to instantiate
         # a FontVersion object
         if len(self.name_ID5_dict) == 0:
-            raise IndexError("Unable to read nameID 5 version records from the font " + self.fontpath)
+            raise IndexError(
+                "Unable to read nameID 5 version records from the font " + self.fontpath
+            )
 
         # define the version string from the dictionary
         for vs in self.name_ID5_dict.values():
@@ -225,7 +242,7 @@ class FontVersion(object):
         self.version = self.version_string_parts[0]
 
         # Read the head.fontRevision record (stored as a float)
-        self.head_fontRevision = self.ttf['head'].fontRevision
+        self.head_fontRevision = self.ttf["head"].fontRevision
 
         self._parse()  # update FontVersion object attributes based upon the data read in
 
@@ -240,10 +257,12 @@ class FontVersion(object):
         gitpy = repo.git
         # git rev-list --abbrev-commit --max-count=1 --format="%h" HEAD - abbreviated unique sha1 for the repository
         # number of sha1 hex characters determined by git (addresses https://github.com/source-foundry/font-v/issues/2)
-        full_git_sha_string = gitpy.rev_list('--abbrev-commit', '--max-count=1', '--format="%h"', 'HEAD')
+        full_git_sha_string = gitpy.rev_list(
+            "--abbrev-commit", "--max-count=1", '--format="%h"', "HEAD"
+        )
         unicode_full_sha_string = tounicode(full_git_sha_string)
         sha_string_list = unicode_full_sha_string.split("\n")
-        final_sha_string = sha_string_list[1].replace('"', '')
+        final_sha_string = sha_string_list[1].replace('"', "")
         return final_sha_string
 
     def _parse_metadata(self):
@@ -256,8 +275,9 @@ class FontVersion(object):
         :return: None
         """
         if len(self.version_string_parts) > 1:
-            self.contains_metadata = True  # set to True if there are > 1 sub strings as others are defined as metadata
-            self.metadata = []             # reset to empty and allow following code to define the list items
+            # set to True if there are > 1 sub strings as others are defined as metadata
+            self.contains_metadata = True
+            self.metadata = []  # reset to empty and allow following code to define the list items
             for metadata_item in self.version_string_parts[1:]:
                 self.metadata.append(metadata_item)
         else:
@@ -278,7 +298,9 @@ class FontVersion(object):
             # Test for regular expression pattern match for state substring at version string list position 1
             # as defined by OpenFV specification.
             # This method call returns tuple of (truth test for match, matched state string (or empty string))
-            response = self._is_state_substring_return_state_match(self.version_string_parts[1])
+            response = self._is_state_substring_return_state_match(
+                self.version_string_parts[1]
+            )
             is_state_substring = response[0]
             state_substring_match = response[1]
             if is_state_substring is True:
@@ -302,8 +324,10 @@ class FontVersion(object):
         :return: None
         """
         if len(self.version_string_parts) > 1:
-            status_needle = self.version_string_parts[1]  # define as list item 1 as per OpenFV specification
-            self.contains_status = False  # reset each time there is a parse attempt and let logic below define
+            # define as list item 1 as per OpenFV specification
+            status_needle = self.version_string_parts[1]
+            # reset each time there is a parse attempt and let logic below define
+            self.contains_status = False
 
             if self._is_development_substring(status_needle):
                 self.contains_status = True
@@ -354,15 +378,27 @@ class FontVersion(object):
             prestring = self.version_string_parts[1]
             state_response = self._is_state_substring_return_state_match(prestring)
             is_state_substring = state_response[0]
-            if self._is_release_substring(prestring) or self._is_development_substring(prestring) or is_state_substring:
+            if (
+                self._is_release_substring(prestring)
+                or self._is_development_substring(prestring)
+                or is_state_substring
+            ):
                 # directly replace when existing status substring
                 self.version_string_parts[1] = state_status_string
             else:
                 # if the second item of the substring list is not a status string, save it and all subsequent list items
                 # then create a new list with inserted status string value
-                self.version_string_parts = [self.version_string_parts[0]]  # redefine list as list with version number
-                self.version_string_parts.append(state_status_string)       # define the status substring as next item
-                for item in self.metadata:  # iterate through all previous metadata substrings and append to list
+                self.version_string_parts = [
+                    self.version_string_parts[0]
+                ]  # redefine list as list with version number
+                self.version_string_parts.append(
+                    state_status_string
+                )  # define the status substring as next item
+                for (
+                    item
+                ) in (
+                    self.metadata
+                ):  # iterate through all previous metadata substrings and append to list
                     self.version_string_parts.append(item)
         else:
             # if the version string is defined as only a version number substring (i.e. list size = 1),
@@ -383,7 +419,10 @@ class FontVersion(object):
 
         :return: boolean True = is development substring and False = is not a development substring
         """
-        if self.develop_string == needle.strip() or self.sha1_develop in needle[-len(self.sha1_develop):]:
+        if (
+            self.develop_string == needle.strip()
+            or self.sha1_develop in needle[-len(self.sha1_develop):]
+        ):
             return True
         else:
             return False
@@ -399,7 +438,10 @@ class FontVersion(object):
 
         :return: boolean True = is release substring and False = is not a release substring
         """
-        if self.release_string == needle.strip() or self.sha1_release in needle[-len(self.sha1_release):]:
+        if (
+            self.release_string == needle.strip()
+            or self.sha1_release in needle[-len(self.sha1_release):]
+        ):
             return True
         else:
             return False
@@ -474,7 +516,9 @@ class FontVersion(object):
             version_number_string = match.group(0)
             version_number_list = version_number_string.split(".")
             version_number_major_int = int(version_number_list[0])
-            version_number_int_list.append(version_number_major_int)  # add major version integer
+            version_number_int_list.append(
+                version_number_major_int
+            )  # add major version integer
 
             for minor_int in version_number_list[1]:
                 version_number_int_list.append(int(minor_int))
@@ -491,7 +535,7 @@ class FontVersion(object):
         """
         return self.head_fontRevision
 
-    # TODO: remove this deprecated method (commented out in v0.7.0)
+    # TODO: remove this deprecated method (commented out in v0.7.0, deprecation warnings in v0.6.0)
     # def get_version_string(self):
     #     """
     #     DEPRECATED: Please convert to use of FontVersion.get_name_id5_version_string() method
@@ -572,15 +616,21 @@ class FontVersion(object):
         git_sha1_hash_formatted = "[" + git_sha1_hash + "]"
 
         if development and release:
-            raise ValueError("Cannot set both development parameter and release parameter to a value of True in "
-                             "fontv.libfv.FontVersion.set_state_git_commit_sha1() method.  These are mutually "
-                             "exclusive.")
+            raise ValueError(
+                "Cannot set both development parameter and release parameter to a value of True in "
+                "fontv.libfv.FontVersion.set_state_git_commit_sha1() method.  These are mutually "
+                "exclusive."
+            )
 
-        if development:   # if request for development status label, append FontVersion.sha1_develop to hash digest
+        if (
+            development
+        ):  # if request for development status label, append FontVersion.sha1_develop to hash digest
             hash_substring = git_sha1_hash_formatted + self.sha1_develop
-        elif release:     # if request for release status label, append FontVersion.sha1_release to hash digest
+        elif (
+            release
+        ):  # if request for release status label, append FontVersion.sha1_release to hash digest
             hash_substring = git_sha1_hash_formatted + self.sha1_release
-        else:             # else just use the hash digest
+        else:  # else just use the hash digest
             hash_substring = git_sha1_hash_formatted
 
         self._set_state_status_substring(hash_substring)
@@ -625,8 +675,8 @@ class FontVersion(object):
         """
         version_number_substring = "Version " + version_number
         self.version_string_parts[0] = version_number_substring
-        self.version = self.version_string_parts[0]                # "Version X.XXX"
-        self.head_fontRevision = float(version_number)             # X.XXX
+        self.version = self.version_string_parts[0]  # "Version X.XXX"
+        self.head_fontRevision = float(version_number)  # X.XXX
         self._parse()
 
     def set_version_string(self, version_string):
@@ -671,14 +721,14 @@ class FontVersion(object):
         """
         # Write to name table ID 5 record
         version_string = self.get_name_id5_version_string()
-        namerecord_list = self.ttf['name'].names
+        namerecord_list = self.ttf["name"].names
         for record in namerecord_list:
             if record.nameID == 5:
                 # write to fonttools ttLib object name ID 5 table record for each nameID 5 record found in the font
                 record.string = version_string
 
         # Write version number to head table fontRevision record
-        self.ttf['head'].fontRevision = self.head_fontRevision
+        self.ttf["head"].fontRevision = self.head_fontRevision
 
         # Write changes out to the font binary path
         if fontpath is None:
