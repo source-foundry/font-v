@@ -17,7 +17,6 @@ from __future__ import unicode_literals
 
 import os
 import re
-import warnings
 
 from fontTools import ttLib
 from fontTools.misc.py23 import tounicode, unicode
