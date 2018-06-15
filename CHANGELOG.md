@@ -1,5 +1,12 @@
 ## Changelog
 
+### v0.7.0
+
+- removed timestamp recalculations on version string modification file writes
+- removed libfv method `FontVersion.get_version_string` (deprecated with warning since v0.6.0)
+- updated fontTools dependency to v3.27.0
+- updated gitpython dependency to v2.1.10
+
 ### v0.6.5
 
 - updated fontTools dependency to v3.25.0
