@@ -97,7 +97,7 @@ class FontVersion(object):
         except AttributeError:
             # if above attempt to call TTFont attribute raises AttributeError (as it would with string file path)
             # then instantiate a ttLib.TTFont object and define the fontpath attribute with the file path string
-            self.ttf = ttLib.TTFont(font)
+            self.ttf = ttLib.TTFont(file=font, recalcTimestamp=False)
             self.fontpath = font
 
         self.develop_string = develop
