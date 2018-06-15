@@ -29,8 +29,10 @@ def main():
     c = Command()
 
     if c.does_not_validate_missing_args():
-        sys.stderr.write("[font-v] ERROR: Please include a subcommand and appropriate optional arguments in "
-                         "your command." + os.linesep)
+        sys.stderr.write(
+            "[font-v] ERROR: Please include a subcommand and appropriate optional arguments in "
+            "your command." + os.linesep
+        )
         sys.exit(1)
 
     if c.is_help_request():
@@ -46,8 +48,10 @@ def main():
     if c.subcmd == "report":
         # argument test
         if c.argc < 2:
-            sys.stderr.write("[font-v] ERROR: Command is missing necessary arguments. Check "
-                             "`font-v --help`." + os.linesep)
+            sys.stderr.write(
+                "[font-v] ERROR: Command is missing necessary arguments. Check "
+                "`font-v --help`." + os.linesep
+            )
             sys.exit(1)
 
         for arg in c.argv[1:]:
@@ -57,7 +61,8 @@ def main():
                     fv = FontVersion(font_path)
                     print(os.linesep + fv.fontpath + ":")
                     print("----- name.ID = 5:")
-                    if "--dev" in c.argv:   # --dev switch report prints every version string in name records
+                    # --dev switch report prints every version string in name records
+                    if "--dev" in c.argv:
                         for record, v_string in fv.name_ID5_dict.items():
                             devstring = str(record) + ":" + os.linesep + str(v_string)
                             print(devstring)
@@ -67,14 +72,20 @@ def main():
                     head_fontrevision = fv.get_head_fontrevision_version_number()
                     print("{:.3f}".format(head_fontrevision))
                 else:
-                    sys.stderr.write("[font-v] ERROR: " + font_path + " does not appear to be a valid ttf "
-                                                                      "or otf font file path." + os.linesep)
+                    sys.stderr.write(
+                        "[font-v] ERROR: "
+                        + font_path
+                        + " does not appear to be a valid ttf "
+                        "or otf font file path." + os.linesep
+                    )
                     sys.exit(1)
     elif c.subcmd == "write":
         # argument test
         if c.argc < 2:
-            sys.stderr.write("[font-v] ERROR: Command is missing necessary arguments. "
-                             "Check `font-v --help`." + os.linesep)
+            sys.stderr.write(
+                "[font-v] ERROR: Command is missing necessary arguments. "
+                "Check `font-v --help`." + os.linesep
+            )
             sys.exit(1)
 
         # argument parsing flags
@@ -82,12 +93,15 @@ def main():
         add_release_string = False
         add_dev_string = False
         add_new_version = False
-        fontpath_list = []            # list of font paths that user submits on command line
+        fontpath_list = []  # list of font paths that user submits on command line
 
         # test for mutually exclusive arguments
         # do not refactor this below the level of the argument tests that follow
         if "--rel" in c.argv and "--dev" in c.argv:
-            sys.stderr.write("[font-v] ERROR: Please use either --dev or --rel argument, not both." + os.linesep)
+            sys.stderr.write(
+                "[font-v] ERROR: Please use either --dev or --rel argument, not both."
+                + os.linesep
+            )
             sys.exit(1)
 
         # Parse command line arguments to determine user request(s)
@@ -100,33 +114,49 @@ def main():
                 add_dev_string = True
             elif arg[0:6] == "--ver=":
                 add_new_version = True
-                version_list = arg.split("=")  # split on the = symbol and use second part as definition
+                # split on the = symbol and use second part as definition
+                version_list = arg.split("=")
                 if len(version_list) < 2:
-                    sys.stderr.write("[font-v] ERROR: --ver=version argument does not have a valid definition"
-                                     " in your command." + os.linesep)
+                    sys.stderr.write(
+                        "[font-v] ERROR: --ver=version argument does not have a valid definition"
+                        " in your command." + os.linesep
+                    )
                     sys.exit(1)
                 # use fonttools library to cast terminal input from user to fontTools.misc.py23.unicode type (imported)
                 # this will be Python 3 str object and Python 2 unicode object
                 # try to cast to this type and catch decoding exceptions, handle with error message to user.
                 try:
-                    version_pre = tounicode(version_list[1], encoding='ascii')
+                    version_pre = tounicode(version_list[1], encoding="ascii")
                 except UnicodeDecodeError as e:
-                    sys.stderr.write("[font-v] ERROR: You appear to have entered a non ASCII character in your"
-                                     "version string.  Please try again." + os.linesep)
+                    sys.stderr.write(
+                        "[font-v] ERROR: You appear to have entered a non ASCII character in your"
+                        "version string.  Please try again." + os.linesep
+                    )
                     sys.stderr.write("[fontTools library]: error message: " + str(e))
                     sys.exit(1)
 
-                version_pre = version_pre.replace("-", ".")   # specified on command line as 1-000
-                version_final = version_pre.replace("_", ".")   # or as 1_000
-            elif len(arg) > 4 and (arg[-4:].lower() == ".ttf" or arg[-4:].lower() == ".otf"):
+                version_pre = version_pre.replace(
+                    "-", "."
+                )  # specified on command line as 1-000
+                version_final = version_pre.replace("_", ".")  # or as 1_000
+            elif len(arg) > 4 and (
+                arg[-4:].lower() == ".ttf" or arg[-4:].lower() == ".otf"
+            ):
                 if file_exists(arg):
                     fontpath_list.append(arg)
                 else:
-                    sys.stderr.write("[font-v] ERROR: " + arg + " does not appear to be a valid "
-                                     "font file path." + os.linesep)
+                    sys.stderr.write(
+                        "[font-v] ERROR: " + arg + " does not appear to be a valid "
+                        "font file path." + os.linesep
+                    )
                     sys.exit(1)
 
-        if add_sha1 is False and add_release_string is False and add_dev_string is False and add_new_version is False:
+        if (
+            add_sha1 is False
+            and add_release_string is False
+            and add_dev_string is False
+            and add_new_version is False
+        ):
             print("[font-v]  No changes specified.  Nothing to do.")
             sys.exit(0)
 
@@ -154,12 +184,17 @@ def main():
 
             fv.write_version_string()
 
-            print("[✓] " + fontpath + " version string was successfully changed "
-                  "to:" + os.linesep + fv.get_name_id5_version_string() + os.linesep)
+            print(
+                "[✓] " + fontpath + " version string was successfully changed "
+                "to:" + os.linesep + fv.get_name_id5_version_string() + os.linesep
+            )
     else:  # user did not enter an acceptable subcommand
-        sys.stderr.write("[font-v] ERROR: Please enter a font-v subcommand with your request." + os.linesep)
+        sys.stderr.write(
+            "[font-v] ERROR: Please enter a font-v subcommand with your request."
+            + os.linesep
+        )
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
