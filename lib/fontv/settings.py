@@ -10,8 +10,8 @@ lib_name = 'font-v'
 # Version Number
 # ------------------------------------------------------------------------------
 major_version = "0"
-minor_version = "6"
-patch_version = "5"
+minor_version = "7"
+patch_version = "0"
 
 # ------------------------------------------------------------------------------
 # Help String
