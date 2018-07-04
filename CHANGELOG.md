@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.7.1
+
+- added license to Python wheel distributions
+
 ### v0.7.0
 
 - removed timestamp recalculations on version string modification file writes
