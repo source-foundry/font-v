@@ -3,6 +3,7 @@
 ### v0.7.1
 
 - added license to Python wheel distributions
+- updated fontTools dependency to v3.28.0
 
 ### v0.7.0
 
