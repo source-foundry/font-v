@@ -2,6 +2,7 @@
 ![](https://github.com/source-foundry/font-v/raw/images/images/font-v-crunch.png)
 
 [![Build Status](https://semaphoreci.com/api/v1/sourcefoundry/font-v/branches/master/badge.svg)](https://semaphoreci.com/sourcefoundry/font-v)  [![Build status](https://ci.appveyor.com/api/projects/status/mtbar0q307926xff/branch/master?svg=true)](https://ci.appveyor.com/project/chrissimpkins/font-v/branch/master)
+[![PyPI](https://img.shields.io/pypi/v/font-v.svg)](https://pypi.org/project/font-v)
 
 ## About
 
