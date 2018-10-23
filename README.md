@@ -1,9 +1,10 @@
 
 ![](https://github.com/source-foundry/font-v/raw/images/images/font-v-crunch.png)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/09e28ad7bc31400a806704ac1d2da70c)](https://app.codacy.com/app/SourceFoundry/font-v?utm_source=github.com&utm_medium=referral&utm_content=source-foundry/font-v&utm_campaign=Badge_Grade_Dashboard)
-[![Build Status](https://semaphoreci.com/api/v1/sourcefoundry/font-v/branches/master/badge.svg)](https://semaphoreci.com/sourcefoundry/font-v)  [![Build status](https://ci.appveyor.com/api/projects/status/mtbar0q307926xff/branch/master?svg=true)](https://ci.appveyor.com/project/chrissimpkins/font-v/branch/master)
+[![Build Status](https://semaphoreci.com/api/v1/sourcefoundry/font-v/branches/master/badge.svg)](https://semaphoreci.com/sourcefoundry/font-v)  
+[![Build status](https://ci.appveyor.com/api/projects/status/mtbar0q307926xff/branch/master?svg=true)](https://ci.appveyor.com/project/chrissimpkins/font-v/branch/master)
 [![PyPI](https://img.shields.io/pypi/v/font-v.svg)](https://pypi.org/project/font-v)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/09e28ad7bc31400a806704ac1d2da70c)](https://app.codacy.com/app/SourceFoundry/font-v)
 
 ## About
 
