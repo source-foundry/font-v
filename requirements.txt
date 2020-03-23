@@ -1,2 +1,2 @@
 gitpython==2.1.10
-fonttools==3.28.0
+fonttools==4.5.0
