@@ -13,7 +13,9 @@ import os
 
 def dir_exists(dirpath):
     """Tests for existence of a directory on the string filepath"""
-    if os.path.exists(dirpath) and os.path.isdir(dirpath):  # test that exists and is a directory
+    if os.path.exists(dirpath) and os.path.isdir(
+        dirpath
+    ):  # test that exists and is a directory
         return True
     else:
         return False
@@ -21,7 +23,9 @@ def dir_exists(dirpath):
 
 def file_exists(filepath):
     """Tests for existence of a file on the string filepath"""
-    if os.path.exists(filepath) and os.path.isfile(filepath):  # test that exists and is a file
+    if os.path.exists(filepath) and os.path.isfile(
+        filepath
+    ):  # test that exists and is a file
         return True
     else:
         return False
@@ -39,16 +43,16 @@ def get_git_root_path(filepath):
     unverified_gitroot_path = os.path.dirname(os.path.abspath(filepath))
 
     # check to see if this assumption is correct
-    if dir_exists(os.path.join(unverified_gitroot_path, '.git')):
+    if dir_exists(os.path.join(unverified_gitroot_path, ".git")):
         verified_gitroot_path = unverified_gitroot_path
     else:  # if not, recursive search up to three directories above for the git repo root
         one_level_up = os.path.abspath(os.path.join(unverified_gitroot_path, os.pardir))
         two_levels_up = os.path.dirname(one_level_up)
         three_levels_up = os.path.dirname(two_levels_up)
 
-        one_level_up_path = os.path.join(one_level_up, '.git')
-        two_levels_up_path = os.path.join(two_levels_up, '.git')
-        three_levels_up_path = os.path.join(three_levels_up, '.git')
+        one_level_up_path = os.path.join(one_level_up, ".git")
+        two_levels_up_path = os.path.join(two_levels_up, ".git")
+        three_levels_up_path = os.path.join(three_levels_up, ".git")
 
         if dir_exists(one_level_up_path):  # check one directory level up
             verified_gitroot_path = os.path.dirname(one_level_up_path)
@@ -57,7 +61,9 @@ def get_git_root_path(filepath):
         elif dir_exists(three_levels_up_path):  # check three directory levels up
             verified_gitroot_path = os.path.dirname(three_levels_up_path)
         else:
-            raise IOError("Unable to determine git repository root for font file " + filepath)
+            raise IOError(
+                "Unable to determine git repository root for font file " + filepath
+            )
 
     return verified_gitroot_path
 

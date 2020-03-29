@@ -16,7 +16,11 @@ Exceptions raised by this module are in the `exceptions.py` module.
 """
 
 import sys
-from fontv.exceptions import IndexOutOfRangeError, MissingArgumentError, MissingDictionaryKeyError
+from fontv.exceptions import (
+    IndexOutOfRangeError,
+    MissingArgumentError,
+    MissingDictionaryKeyError,
+)
 
 
 class Command(object):
@@ -57,6 +61,7 @@ class Command(object):
         switches: (set)
                Set of long and short switch syntax arguments
     """
+
     def __init__(self):
         self.argv = sys.argv[1:]
         self.arguments = Arguments(self.argv)
@@ -74,11 +79,11 @@ class Command(object):
         self.arglp = self.arguments.get_argument_for_commandobj(self.argc - 1)
         self.subcmd = self.arg0
         self.subsubcmd = self.arg1
-        self.has_args = (len(self.arguments) > 0)
-        self.has_switches = (len(self.switches) > 0)
-        self.has_mops = (len(self.mops) > 0)
-        self.has_defs = (len(self.defs) > 0)
-        self.has_mdefs = (len(self.mdefs) > 0)
+        self.has_args = len(self.arguments) > 0
+        self.has_switches = len(self.switches) > 0
+        self.has_mops = len(self.mops) > 0
+        self.has_defs = len(self.defs) > 0
+        self.has_mdefs = len(self.mdefs) > 0
 
     # TODO: implement support for short / long option alternatives
 
@@ -196,8 +201,8 @@ class Command(object):
             if needle in self.defaults.keys():
                 pass
             else:
-                return False   # if any needle is absent, returns False
-        return True   # if all tests pass, returns True
+                return False  # if any needle is absent, returns False
+        return True  # if all tests pass, returns True
 
     def get_default(self, default_needle):
         """Gets the value for an existing default option : argument definition in the Command.defaults
@@ -267,12 +272,16 @@ class Command(object):
         :param cmd_list: (tuple) Expected commands in expected order starting at Command.argv index position 0
         :returns: boolean"""
 
-        if len(cmd_list) > len(self.argv):   # request does not inlude more args than the Command.argv property includes
+        if len(cmd_list) > len(
+            self.argv
+        ):  # request does not inlude more args than the Command.argv property includes
             return False
         else:
             index = 0
             for test_arg in cmd_list:
-                if self.argv[index] == test_arg:   # test that argument at index position matches in parameter order
+                if (
+                    self.argv[index] == test_arg
+                ):  # test that argument at index position matches in parameter order
                     index += 1
                 else:
                     return False
@@ -456,14 +465,54 @@ class Command(object):
         the_string = the_string + "\n" + "obj.defs = " + str(self.defs)
         the_string = the_string + "\n" + "obj.mdefs = " + str(self.mdefs)
         the_string = the_string + "\n" + "obj.mops = " + str(self.mops)
-        the_string = the_string + "\n" + "obj.arg0 = " + self._get_obj_string_format_arg(self.arg0)
-        the_string = the_string + "\n" + "obj.arg1 = " + self._get_obj_string_format_arg(self.arg1)
-        the_string = the_string + "\n" + "obj.arg2 = " + self._get_obj_string_format_arg(self.arg2)
-        the_string = the_string + "\n" + "obj.arg3 = " + self._get_obj_string_format_arg(self.arg3)
-        the_string = the_string + "\n" + "obj.arg4 = " + self._get_obj_string_format_arg(self.arg4)
-        the_string = the_string + "\n" + "obj.arglp = " + self._get_obj_string_format_arg(self.arglp)
-        the_string = the_string + "\n" + "obj.subcmd = " + self._get_obj_string_format_arg(self.subcmd)
-        the_string = the_string + "\n" + "obj.subsubcmd = " + self._get_obj_string_format_arg(self.subsubcmd)
+        the_string = (
+            the_string
+            + "\n"
+            + "obj.arg0 = "
+            + self._get_obj_string_format_arg(self.arg0)
+        )
+        the_string = (
+            the_string
+            + "\n"
+            + "obj.arg1 = "
+            + self._get_obj_string_format_arg(self.arg1)
+        )
+        the_string = (
+            the_string
+            + "\n"
+            + "obj.arg2 = "
+            + self._get_obj_string_format_arg(self.arg2)
+        )
+        the_string = (
+            the_string
+            + "\n"
+            + "obj.arg3 = "
+            + self._get_obj_string_format_arg(self.arg3)
+        )
+        the_string = (
+            the_string
+            + "\n"
+            + "obj.arg4 = "
+            + self._get_obj_string_format_arg(self.arg4)
+        )
+        the_string = (
+            the_string
+            + "\n"
+            + "obj.arglp = "
+            + self._get_obj_string_format_arg(self.arglp)
+        )
+        the_string = (
+            the_string
+            + "\n"
+            + "obj.subcmd = "
+            + self._get_obj_string_format_arg(self.subcmd)
+        )
+        the_string = (
+            the_string
+            + "\n"
+            + "obj.subsubcmd = "
+            + self._get_obj_string_format_arg(self.subsubcmd)
+        )
 
         return the_string
 
@@ -485,6 +534,7 @@ class Arguments(list):
       The class is derived from the Python list type.
 
       :param argv: A list of command line arguments that maintain the argument order that was entered on command line"""
+
     def __init__(self, argv):
         list.__init__(self, argv)
 
@@ -494,7 +544,7 @@ class Arguments(list):
             for argument in self:
                 argument_string = argument_string + "'" + argument + "', "
         argument_string = argument_string.rstrip()
-        argument_string = argument_string.rstrip(',')
+        argument_string = argument_string.rstrip(",")
 
         return "[" + argument_string + "]"
 
@@ -504,7 +554,7 @@ class Arguments(list):
             for argument in self:
                 argument_string = argument_string + "'" + argument + "', "
         argument_string = argument_string.rstrip()
-        argument_string = argument_string.rstrip(',')
+        argument_string = argument_string.rstrip(",")
 
         return "[" + argument_string + "]"
 
@@ -518,7 +568,7 @@ class Arguments(list):
         if (len(self) > position) and (position >= 0):
             return self[position]
         else:
-            return ""   # intentionally set as empty string rather than raise exception for Command obj instantation
+            return ""  # intentionally set as empty string rather than raise exception for Command obj instantation
 
     def get_argument(self, position):
         """Returns an argument string by the argument list index position.
@@ -582,6 +632,7 @@ class Switches(set):
 
     :param argv: (list) A list of command line arguments that maintain the argument order that was entered on command line
     """
+
     def __init__(self, argv):
         set.__init__(self, self._make_switch_set(argv))
 
@@ -687,8 +738,12 @@ class Mops(set):
         mopsset = set()
         for mops_candidate in argv:
             if "-" in mops_candidate[0] and "=" not in mops_candidate:
-                if len(mops_candidate) > 2:  # the argument includes '-' and more than one character following dash
-                    if mops_candidate[1] != "-":  # it is not long option syntax (e.g. --long)
+                if (
+                    len(mops_candidate) > 2
+                ):  # the argument includes '-' and more than one character following dash
+                    if (
+                        mops_candidate[1] != "-"
+                    ):  # it is not long option syntax (e.g. --long)
                         mops_candidate = mops_candidate.replace("-", "")
                         for switch in mops_candidate:
                             mopsset.add(switch)
@@ -729,6 +784,7 @@ class Definitions(dict):
 
     :param argv: (list) A list of command line arguments that maintain the argument order that was entered on command line
     """
+
     def __init__(self, argv):
         dict.__init__(self, self._make_definitions_obj(argv))
 
@@ -746,7 +802,7 @@ class Definitions(dict):
         for def_candidate in argv:
             # performance improvement to eliminate multiple string testing calls within this loop
             # dash_truth_test = def_candidate.startswith("-")
-            dash_truth_test = ("-" in def_candidate[0])
+            dash_truth_test = "-" in def_candidate[0]
             if dash_truth_test is True:
                 # ignore all definition syntax strings after the double dash `--` command line idiom
                 if def_candidate == "--":
@@ -755,7 +811,9 @@ class Definitions(dict):
                     # defines -option=definition syntax
                     if "=" in def_candidate:
                         split_def = def_candidate.split("=")
-                        cleaned_key = split_def[0].lstrip("-")  # remove dash characters from the option
+                        cleaned_key = split_def[0].lstrip(
+                            "-"
+                        )  # remove dash characters from the option
                         defmap[cleaned_key] = split_def[1]
                     # defines -d <positional def> or --define <positional def> syntax
                     elif counter < (arglist_length - 1):
@@ -819,6 +877,7 @@ class MultiDefinitions(Definitions):
 
     :param argv: (list) A list of command line arguments that maintain the argument order that was entered on command line
     """
+
     def __init__(self, argv):
         Definitions.__init__(self, argv)
 
@@ -829,7 +888,7 @@ class MultiDefinitions(Definitions):
         for def_candidate in argv:
             # performance improvement to eliminate multiple string testing calls within this loop
             # dash_truth_test = def_candidate.startswith("-")
-            dash_truth_test = ("-" in def_candidate[0])
+            dash_truth_test = "-" in def_candidate[0]
             if dash_truth_test is True:
                 # ignore all definition syntax strings after the double dash `--` command line idiom
                 if def_candidate == "--":
@@ -838,7 +897,9 @@ class MultiDefinitions(Definitions):
                     # defines -option=definition syntax
                     if "=" in def_candidate:
                         split_def = def_candidate.split("=")
-                        cleaned_key = split_def[0].lstrip("-")  # remove dash characters from the option
+                        cleaned_key = split_def[0].lstrip(
+                            "-"
+                        )  # remove dash characters from the option
                         if cleaned_key in defmap.keys():
                             defmap[cleaned_key].append(split_def[1])
                         else:

@@ -1,5 +1,12 @@
 ## Changelog
 
+### v1.0.0
+
+- remove Py2.7 support
+- remove Py3.5 and below support
+- update project Python dependencies
+- fix: CI testing configuration and unit tests, including those that were Py2.7 dependent tests
+
 ### v0.7.1
 
 - added license to Python wheel distributions
@@ -72,7 +79,7 @@ libfv changes:
 - added FontVersion object attribute parsing after git commit sha1 hash writes to in memory version strings
 - refactored development/release status substring truth testing method approach to eliminate matches against strings that fall outside of spec
 - refactored FontVersion.get_status_substring method to FontVersion.get_state_status_substring with new implementation
-- refactored FontVersion._set_status_substring to FontVersion._set_state_status_substring with new implementation
+- refactored FontVersion.\_set_status_substring to FontVersion.\_set_state_status_substring with new implementation
 - eliminated FontVersion.status object attributed (unncessary)
 - revised version strings in test fonts to support OpenFV specification
 - modified all supporting tests for above changes
