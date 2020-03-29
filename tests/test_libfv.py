@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 
+import math
 import os
 import os.path
 import re
@@ -123,14 +124,14 @@ all_testfiles_list = [
     "tests/testfiles/Test-VersionShaDEV.otf",
     "tests/testfiles/Test-VersionShaDEVMeta.otf",
     "tests/testfiles/Test-VersionShaREL.otf",
-    "tests/testfiles/Test-VersionShaRELMeta.otf"
+    "tests/testfiles/Test-VersionShaRELMeta.otf",
 ]
 
 meta_testfiles_list = [
     "tests/testfiles/Test-VersionMeta.ttf",
     "tests/testfiles/Test-VersionMoreMeta.ttf",
     "tests/testfiles/Test-VersionMeta.otf",
-    "tests/testfiles/Test-VersionMoreMeta.otf"
+    "tests/testfiles/Test-VersionMoreMeta.otf",
 ]
 
 dev_testfiles_list = [
@@ -141,7 +142,7 @@ dev_testfiles_list = [
     "tests/testfiles/Test-VersionDEV.otf",
     "tests/testfiles/Test-VersionDEVMeta.otf",
     "tests/testfiles/Test-VersionShaDEV.otf",
-    "tests/testfiles/Test-VersionShaDEVMeta.otf"
+    "tests/testfiles/Test-VersionShaDEVMeta.otf",
 ]
 
 rel_testfiles_list = [
@@ -152,7 +153,7 @@ rel_testfiles_list = [
     "tests/testfiles/Test-VersionREL.otf",
     "tests/testfiles/Test-VersionRELMeta.otf",
     "tests/testfiles/Test-VersionShaREL.otf",
-    "tests/testfiles/Test-VersionShaRELMeta.otf"
+    "tests/testfiles/Test-VersionShaRELMeta.otf",
 ]
 
 state_testfiles_list = [
@@ -167,7 +168,7 @@ state_testfiles_list = [
     "tests/testfiles/Test-VersionShaDEV.otf",
     "tests/testfiles/Test-VersionShaREL.otf",
     "tests/testfiles/Test-VersionShaDEVMeta.otf",
-    "tests/testfiles/Test-VersionShaRELMeta.otf"
+    "tests/testfiles/Test-VersionShaRELMeta.otf",
 ]
 
 # pytest fixtures for parametrized testing of various groupings of test files
@@ -220,12 +221,12 @@ def _test_hexadecimal_sha1_string_matches(needle):
 def _get_mock_missing_nameid5_ttfont(filepath):
     ttf = TTFont(filepath)
     record_list = []
-    for record in ttf['name'].names:
+    for record in ttf["name"].names:
         if record.nameID == 5:
             pass
         else:
             record_list.append(record)
-    ttf['name'].names = record_list
+    ttf["name"].names = record_list
 
     return ttf
 
@@ -237,6 +238,7 @@ def _get_mock_missing_nameid5_ttfont(filepath):
 #   BEGIN FontVersion INSTANTIATION TESTS
 #
 #
+
 
 def test_libfv_missing_file_read_attempt():
     with pytest.raises(IOError):
@@ -289,13 +291,13 @@ def test_libfv_version_string_property_set_on_instantiation_ttfont_object(allfon
 
 def test_libfv_head_fontrevision_property_set_on_instantiation(allfonts):
     fv = FontVersion(allfonts)
-    assert fv.head_fontRevision == 1.010
+    assert math.isclose(fv.head_fontRevision, 1.010, abs_tol=0.00001)
 
 
 def test_libfv_head_fontrevision_property_set_on_instantiation_ttfont_object(allfonts):
     ttf = TTFont(allfonts)
     fv = FontVersion(ttf)
-    assert fv.head_fontRevision == 1.010
+    assert math.isclose(fv.head_fontRevision, 1.010, abs_tol=0.00001)
 
 
 def test_libfv_fontversion_object_parameter_properties_defaults(allfonts):
@@ -354,7 +356,9 @@ def test_libfv_fontversion_object_properties_truth_defaults_with_metaonly(metafo
     assert fv.is_release is False
 
 
-def test_libfv_fontversion_object_properties_truth_defaults_with_metaonly_ttfont_object(metafonts):
+def test_libfv_fontversion_object_properties_truth_defaults_with_metaonly_ttfont_object(
+    metafonts,
+):
     ttf = TTFont(metafonts)
     fv = FontVersion(ttf)
     assert fv.contains_metadata is True
@@ -554,6 +558,7 @@ def test_libfv_fontversion_object_versionparts_meta_lists_version_with_twometa_t
 #
 #
 
+
 def test_libfv_fontversion_object_str_method(allfonts):
     fv = FontVersion(allfonts)
     test_string = fv.__str__()
@@ -593,7 +598,9 @@ def test_libfv_clear_metadata_method(allfonts):
 
 def test_libfv_get_head_fontrevision_method(allfonts):
     fv = FontVersion(allfonts)
-    assert fv.get_head_fontrevision_version_number() == 1.010
+    assert math.isclose(
+        fv.get_head_fontrevision_version_number(), 1.010, abs_tol=0.00001
+    )
 
 
 def test_libfv_get_metadata_method():
@@ -639,15 +646,21 @@ def test_libfv_get_status_method_nostatus(metafonts):
 def test_libfv_is_state_substring_return_match_valid():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
 
-    is_state_substring, state_substring = fv._is_state_substring_return_state_match("[abcd123]")
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match(
+        "[abcd123]"
+    )
     assert is_state_substring is True
     assert state_substring == "abcd123"
 
-    is_state_substring, state_substring = fv._is_state_substring_return_state_match("[abcd123]-dev")
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match(
+        "[abcd123]-dev"
+    )
     assert is_state_substring is True
     assert state_substring == "abcd123"
 
-    is_state_substring, state_substring = fv._is_state_substring_return_state_match("[abcd123]-release")
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match(
+        "[abcd123]-release"
+    )
     assert is_state_substring is True
     assert state_substring == "abcd123"
 
@@ -655,15 +668,21 @@ def test_libfv_is_state_substring_return_match_valid():
 def test_libfv_is_state_substring_return_match_invalid():
     fv = FontVersion("tests/testfiles/Test-VersionOnly.ttf")
 
-    is_state_substring, state_substring = fv._is_state_substring_return_state_match("abcd123")
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match(
+        "abcd123"
+    )
     assert is_state_substring is False
     assert state_substring == ""
 
-    is_state_substring, state_substring = fv._is_state_substring_return_state_match("{abcd123}")
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match(
+        "{abcd123}"
+    )
     assert is_state_substring is False
     assert state_substring == ""
 
-    is_state_substring, state_substring = fv._is_state_substring_return_state_match("[&%$#@!]")
+    is_state_substring, state_substring = fv._is_state_substring_return_state_match(
+        "[&%$#@!]"
+    )
     assert is_state_substring is False
     assert state_substring == ""
 
@@ -721,14 +740,20 @@ def test_libfv_get_name_id5_version_string_method():
     fv3 = FontVersion("tests/testfiles/Test-VersionMoreMeta.ttf")
     assert fv1.get_name_id5_version_string() == "Version 1.010"
     assert fv2.get_name_id5_version_string() == "Version 1.010;metadata string"
-    assert fv3.get_name_id5_version_string() == "Version 1.010;metadata string;another metadata string"
+    assert (
+        fv3.get_name_id5_version_string()
+        == "Version 1.010;metadata string;another metadata string"
+    )
 
     fv4 = FontVersion("tests/testfiles/Test-VersionOnly.otf")
     fv5 = FontVersion("tests/testfiles/Test-VersionMeta.otf")
     fv6 = FontVersion("tests/testfiles/Test-VersionMoreMeta.otf")
     assert fv4.get_name_id5_version_string() == "Version 1.010"
     assert fv5.get_name_id5_version_string() == "Version 1.010;metadata string"
-    assert fv6.get_name_id5_version_string() == "Version 1.010;metadata string;another metadata string"
+    assert (
+        fv6.get_name_id5_version_string()
+        == "Version 1.010;metadata string;another metadata string"
+    )
 
 
 def test_libfv_set_development_method_on_versiononly():
@@ -788,7 +813,9 @@ def test_libfv_set_development_method_on_nostatus(metafonts):
     prelength = len(fv.version_string_parts)
     fv.set_development_status()
     postlength = len(fv.version_string_parts)
-    assert prelength == (postlength - 1)   # should add an additional substring to the version string here
+    assert prelength == (
+        postlength - 1
+    )  # should add an additional substring to the version string here
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "DEV"
     assert fv.is_development is True
@@ -854,7 +881,9 @@ def test_libfv_set_release_method_on_nostatus(metafonts):
     prelength = len(fv.version_string_parts)
     fv.set_release_status()
     postlength = len(fv.version_string_parts)
-    assert prelength == (postlength - 1)   # should add an additional substring to the version string here
+    assert prelength == (
+        postlength - 1
+    )  # should add an additional substring to the version string here
     assert fv.version_string_parts[0] == "Version 1.010"
     assert fv.version_string_parts[1] == "RELEASE"
     assert fv.is_development is False
@@ -873,8 +902,12 @@ def test_libfv_set_default_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
     fv.set_state_git_commit_sha1()
     sha_needle = fv.version_string_parts[1]
-    assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
-    assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
+    assert (
+        _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True
+    )  # confirm that set with state label
+    assert (
+        _test_hexadecimal_sha1_string_matches(fv.state) is True
+    )  # confirm that state property is properly set
     assert ("-dev" in sha_needle) is False
     assert ("-release" in sha_needle) is False
     assert ("DEV" in sha_needle) is False
@@ -885,8 +918,12 @@ def test_libfv_set_development_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
     fv.set_state_git_commit_sha1(development=True)
     sha_needle = fv.version_string_parts[1]
-    assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
-    assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
+    assert (
+        _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True
+    )  # confirm that set with state label
+    assert (
+        _test_hexadecimal_sha1_string_matches(fv.state) is True
+    )  # confirm that state property is properly set
     assert ("-dev" in sha_needle) is True
     assert ("-release" in sha_needle) is False
     assert ("DEV" in sha_needle) is False
@@ -897,8 +934,12 @@ def test_libfv_set_release_gitsha1_method(allfonts):
     fv = FontVersion(allfonts)
     fv.set_state_git_commit_sha1(release=True)
     sha_needle = fv.version_string_parts[1]
-    assert _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True  # confirm that set with state label
-    assert _test_hexadecimal_sha1_string_matches(fv.state) is True  # confirm that state property is properly set
+    assert (
+        _test_hexadecimal_sha1_formatted_string_matches(sha_needle) is True
+    )  # confirm that set with state label
+    assert (
+        _test_hexadecimal_sha1_string_matches(fv.state) is True
+    )  # confirm that state property is properly set
     assert ("-dev" in sha_needle) is False
     assert ("-release" in sha_needle) is True
     assert ("DEV" in sha_needle) is False
@@ -990,7 +1031,9 @@ def test_libfv_set_version_string_three_substrings():
 
 
 def test_libfv_write_version_string_method(allfonts):
-    temp_out_file_path = os.path.join("tests", "testfiles", "Test-Temp.ttf")  # temp file write path
+    temp_out_file_path = os.path.join(
+        "tests", "testfiles", "Test-Temp.ttf"
+    )  # temp file write path
     fv = FontVersion(allfonts)
     fv.set_version_number("2.000")
     fv.write_version_string(fontpath=temp_out_file_path)
@@ -1011,7 +1054,9 @@ def test_libfv_write_version_string_method(allfonts):
 
 
 def test_libfv_write_version_string_method_ttfont_object(allfonts):
-    temp_out_file_path = os.path.join("tests", "testfiles", "Test-Temp.ttf")  # temp file write path
+    temp_out_file_path = os.path.join(
+        "tests", "testfiles", "Test-Temp.ttf"
+    )  # temp file write path
     ttf = TTFont(allfonts)
     fv = FontVersion(ttf)
     fv.set_version_number("2.000")
@@ -1030,4 +1075,3 @@ def test_libfv_write_version_string_method_ttfont_object(allfonts):
     assert fv3.head_fontRevision == 3.000
 
     os.remove(temp_out_file_path)
-
