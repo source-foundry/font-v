@@ -120,19 +120,7 @@ def main():
                         " in your command." + os.linesep
                     )
                     sys.exit(1)
-                # use fonttools library to cast terminal input from user to fontTools.misc.py23.unicode type (imported)
-                # this will be Python 3 str object and Python 2 unicode object
-                # try to cast to this type and catch decoding exceptions, handle with error message to user.
-                try:
-                    version_pre = tounicode(version_list[1], encoding="ascii")
-                except UnicodeDecodeError as e:
-                    sys.stderr.write(
-                        "[font-v] ERROR: You appear to have entered a non ASCII character in your"
-                        "version string.  Please try again." + os.linesep
-                    )
-                    sys.stderr.write("[fontTools library]: error message: " + str(e))
-                    sys.exit(1)
-
+                version_pre = version_list[1]
                 version_pre = version_pre.replace(
                     "-", "."
                 )  # specified on command line as 1-000
