@@ -19,7 +19,6 @@ import os
 import re
 
 from fontTools import ttLib
-from fontTools.misc.py23 import tounicode, unicode
 from git import Repo
 
 from fontv.utilities import get_git_root_path
@@ -116,7 +115,9 @@ class FontVersion(object):
         # name.ID = 5 version string substring data
         self.name_ID5_dict = {}
 
-        self.version_string_parts = []  # list of substring items in version string (; delimited parse to list)
+        self.version_string_parts = (
+            []
+        )  # list of substring items in version string (; delimited parse to list)
         self.version = ""
         self.state = ""
         self.metadata = []
@@ -259,7 +260,7 @@ class FontVersion(object):
         full_git_sha_string = gitpy.rev_list(
             "--abbrev-commit", "--max-count=1", '--format="%h"', "HEAD"
         )
-        unicode_full_sha_string = tounicode(full_git_sha_string)
+        unicode_full_sha_string = full_git_sha_string
         sha_string_list = unicode_full_sha_string.split("\n")
         final_sha_string = sha_string_list[1].replace('"', "")
         return final_sha_string
@@ -276,7 +277,9 @@ class FontVersion(object):
         if len(self.version_string_parts) > 1:
             # set to True if there are > 1 sub strings as others are defined as metadata
             self.contains_metadata = True
-            self.metadata = []  # reset to empty and allow following code to define the list items
+            self.metadata = (
+                []
+            )  # reset to empty and allow following code to define the list items
             for metadata_item in self.version_string_parts[1:]:
                 self.metadata.append(metadata_item)
         else:
@@ -420,7 +423,7 @@ class FontVersion(object):
         """
         if (
             self.develop_string == needle.strip()
-            or self.sha1_develop in needle[-len(self.sha1_develop):]
+            or self.sha1_develop in needle[-len(self.sha1_develop) :]
         ):
             return True
         else:
@@ -439,7 +442,7 @@ class FontVersion(object):
         """
         if (
             self.release_string == needle.strip()
-            or self.sha1_release in needle[-len(self.sha1_release):]
+            or self.sha1_release in needle[-len(self.sha1_release) :]
         ):
             return True
         else:

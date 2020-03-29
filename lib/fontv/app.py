@@ -17,8 +17,6 @@ from __future__ import unicode_literals
 import os
 import sys
 
-from fontTools.misc.py23 import tounicode, unicode
-
 from fontv import settings
 from fontv.commandlines import Command
 from fontv.libfv import FontVersion
