@@ -1,5 +1,10 @@
 ## Changelog
 
+### v1.0.1
+
+- remove Py2 wheel builds
+- add requirements.txt defined build dependency installs in CI testing
+
 ### v1.0.0
 
 - remove Py2.7 support
