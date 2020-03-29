@@ -74,4 +74,4 @@ tests/profiler.py
 .pytest_cache
 scratchpad.py
 
-
+.venv
