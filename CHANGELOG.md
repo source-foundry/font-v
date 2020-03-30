@@ -1,5 +1,11 @@
 ## Changelog
 
+### v1.0.2
+
+- add Production/Stable classifier to `setup.py`
+- remove Python < 3.6 classifiers from `setup.py`
+- add Python 3.7, Python 3.8 classifiers to `setup.py`
+
 ### v1.0.1
 
 - remove Py2 wheel builds
