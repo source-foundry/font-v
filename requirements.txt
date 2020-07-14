@@ -6,5 +6,5 @@
 #
 fonttools==4.12.1          # via font-v (setup.py)
 gitdb==4.0.5              # via gitpython
-gitpython==3.1.3          # via font-v (setup.py)
+gitpython==3.1.7          # via font-v (setup.py)
 smmap==3.0.4              # via gitdb
