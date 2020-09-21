@@ -1,8 +1,7 @@
 ![](https://github.com/source-foundry/font-v/raw/images/images/font-v-crunch.png)
 
 [![PyPI](https://img.shields.io/pypi/v/font-v.svg)](https://pypi.org/project/font-v)
-[![Build Status](https://travis-ci.com/source-foundry/font-v.svg?branch=master)](https://travis-ci.com/source-foundry/font-v)
-[![Build status](https://ci.appveyor.com/api/projects/status/mtbar0q307926xff/branch/master?svg=true)](https://ci.appveyor.com/project/chrissimpkins/font-v/branch/master)
+![Python CI](https://github.com/source-foundry/font-v/workflows/Python%20CI/badge.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/09e28ad7bc31400a806704ac1d2da70c)](https://app.codacy.com/app/SourceFoundry/font-v)
 
 ## About
