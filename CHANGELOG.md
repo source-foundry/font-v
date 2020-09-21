@@ -1,5 +1,13 @@
 ## Changelog
 
+### v1.0.3
+
+- update fonttools dependency to v4.14.0
+- update gitdb dependency to v4.0.5
+- update gitpython dependency to v3.1.8
+- update smmap dependency to v3.0.4
+- transition CI testing to the GitHub Actions service
+
 ### v1.0.2
 
 - add Production/Stable classifier to `setup.py`
