@@ -1,5 +1,12 @@
 ## Changelog
 
+### v1.0.4
+
+- add cPython 3.9 interpreter testing
+- add CodeQL testing
+- update fonttools dependency to v4.16.1
+- update gitpython dependency to v3.1.10
+
 ### v1.0.3
 
 - update fonttools dependency to v4.14.0
