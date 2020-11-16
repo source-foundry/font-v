@@ -1,5 +1,12 @@
 ## Changelog
 
+### v1.0.5
+
+- add Python 3.9 classifier to `setup.py`
+- minor `setup.py` source formatting updates
+- update fonttools dependency to v4.17.0
+- update gitpython dependency to v3.1.11
+
 ### v1.0.4
 
 - add cPython 3.9 interpreter testing

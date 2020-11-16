@@ -54,7 +54,9 @@ setup(
     packages=find_packages("lib"),
     package_dir={"": "lib"},
     install_requires=["gitpython", "fonttools"],
-    entry_points={"console_scripts": ["font-v = fontv.app:main"],},
+    entry_points={
+        "console_scripts": ["font-v = fontv.app:main"],
+    },
     keywords="",
     include_package_data=True,
     classifiers=[
@@ -67,5 +69,6 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
 )
