@@ -8,10 +8,6 @@ Please review the existing issue reports (including open and closed) for a histo
 
 Contributions to the source code are highly encouraged and welcomed!  We recommend that you open a new issue report to discuss a major source code refactor, implementation of a major new feature, or any other major modification that requires an extended amount of time/effort before you invest the time in the work (assuming that your intent is for this to be merged upstream).
 
-### OpenFV compliance
-
-Work in this project must maintain compliance with the [OpenFV semantic font versioning specification](https://github.com/openfv/openfv).  Please read and understand this specification before you submit work for review. Work that does not comply with the OpenFV specification will not be accepted.  If you would like to submit a proposal for changes to the specification itself, please do so on the OpenFV repository rather than on this repository.
-
 ### License
 
 To contribute source code to this project you must be willing to contribute your source changes under the existing [MIT license](https://github.com/source-foundry/font-v/blob/master/docs/LICENSE).  If this is not acceptable, please do not submit your changes for review.
@@ -28,7 +24,7 @@ This will allow you to immediately test source code changes that you make in the
 
 ### Source Code Testing
 
-The font-v project is tested against current versions of the Python 2.7, 3.4, 3.5, and 3.6 interpreters across Linux, macOS, and Windows platforms.  We intend to maintain this breadth of cross platform and Python interpreter release history support as new Python releases become available.  Please submit an issue report on the repository to discuss any proposed changes that will narrow the level of Python interpreter or platform support in the project.
+The font-v project is tested against current versions of the Python 3.7+ interpreters across Linux, macOS, and Windows platforms.  We intend to maintain this breadth of cross platform and Python interpreter release history support as new Python releases become available.  Please submit an issue report on the repository to discuss any proposed changes that will narrow the level of Python interpreter or platform support in the project.
 
 We use [tox](https://tox.readthedocs.io/en/latest/) and [pytest](https://docs.pytest.org/en/latest/) for Python source code testing.  You can install these testing packages on your development system with:
 
@@ -40,7 +36,7 @@ $ pip install pytest
 To run the `font-v` project tests locally across different Python interpreter versions, install all Python interpreter versions that you intend to use for testing and then use a command like the following from the root of the repository, specifying the target Python interpreter versions:
 
 ```
-$ tox -e py27,py36
+$ tox -e py310
 ```
 
 See the tox documentation for additional details and further information about available Python interpreter versions.
