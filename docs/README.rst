@@ -11,6 +11,4 @@ libfv API documentation: https://font-v.readthedocs.io/en/latest/
 
 Issue reporting: https://github.com/source-foundry/font-v/issues
 
-OpenFV semantic font versioning specification - https://github.com/openfv/openfv
-
 License: MIT
