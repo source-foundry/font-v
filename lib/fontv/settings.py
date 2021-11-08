@@ -9,9 +9,9 @@ lib_name = "font-v"
 # ------------------------------------------------------------------------------
 # Version Number
 # ------------------------------------------------------------------------------
-major_version = "1"
+major_version = "2"
 minor_version = "0"
-patch_version = "5"
+patch_version = "0"
 
 # ------------------------------------------------------------------------------
 # Help String
@@ -24,7 +24,7 @@ MIT License
 Source: https://github.com/source-foundry/font-v
 ====================================================
 
-font-v is a font version string reporting and modification tool for ttf and otf fonts.  It is built with the libfv library and supports the OpenFV semantic font versioning specification.
+font-v is a font version string reporting and modification tool for ttf and otf fonts.
 
 USAGE:
 
@@ -60,8 +60,6 @@ For platforms that treat the period as a special shell character, an underscore 
 You can include version number, status, and state options in the same request to make all of these modifications simultaneously.
 
 The write subcommand modifies all nameID 5 records identified in the OpenType name table of the font (i.e. across all platformID).
-
-font-v and the underlying libfv library follow the OpenFV semantic font versioning specification.  This specification can be viewed at https://github.com/openfv/openfv.
 
 """
 

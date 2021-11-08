@@ -1,5 +1,18 @@
 ## Changelog
 
+## v2.0.0
+
+- drop support for Python interpreters < 3.7 (dropped by our fonttools dependency)
+- drop Py 3.6 CI testing
+- add Py 3.10 CI testing
+- transition GitHub Actions workflows to Python 3.10 interpreter default
+- use Py 3.10 in tox.ini config
+- remove OpenFV spec references from source and repository documentation
+- udpate fonttools dependency to v4.28.1
+- update gitdb dependency to v4.0.9
+- update gitpython dependency to v3.1.24
+- update smmap dependency to v5.0.0
+
 ### v1.0.5
 
 - add Python 3.9 classifier to `setup.py`
