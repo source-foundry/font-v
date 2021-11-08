@@ -75,3 +75,4 @@ tests/profiler.py
 scratchpad.py
 
 .venv
+.vscode
