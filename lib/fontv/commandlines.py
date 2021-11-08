@@ -130,8 +130,8 @@ class Command(object):
     def does_not_validate_n_args(self, number):
         """Command string validation for inclusion of exactly n arguments to executable.
 
-           :param number: (integer) Defines the number of expected arguments for this test
-           :returns: boolean. True = does not validate. False = validates"""
+        :param number: (integer) Defines the number of expected arguments for this test
+        :returns: boolean. True = does not validate. False = validates"""
 
         if self.argc == number:
             return False
@@ -366,10 +366,10 @@ class Command(object):
     def get_arg_after(self, target_arg):
         """Returns the next positional argument at index position n + 1 to a command line argument at index position n.
 
-           :param target_arg: (string) Argument string for the test.
-           :returns: string
-           :raises: MissingArgumentError when target_arg is not found in the parsed argument list
-           :raises: IndexOutOfRangeError when target_arg is the last positional argument"""
+        :param target_arg: (string) Argument string for the test.
+        :returns: string
+        :raises: MissingArgumentError when target_arg is not found in the parsed argument list
+        :raises: IndexOutOfRangeError when target_arg is the last positional argument"""
 
         if target_arg in self.argv:
             recipient_position = self.arguments.get_arg_position(target_arg)
