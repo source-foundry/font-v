@@ -56,9 +56,9 @@ def test_utilities_get_gitrootpath_function_returns_proper_path_three_levels_up(
     assert os.path.isdir(gitdir_path) is True
 
 
-def test_utilities_get_gitrootpath_function_raises_ioerror_four_levels_up():
+def test_utilities_get_gitrootpath_function_raises_ioerror_six_levels_up():
     with pytest.raises(IOError):
-        filepath = "tests/testfiles/deepdir/deepdir2/test.txt"
+        filepath = "tests/testfiles/deepdir/deepdir2/deepdir3/deepdir4/test.txt"
         get_git_root_path(filepath)
 
 
