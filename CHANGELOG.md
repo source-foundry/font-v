@@ -1,5 +1,10 @@
 ## Changelog
 
+## v2.1.0
+
+- `get_git_root_path` now searches up to five directory levels for the root .git directory path before failing (broadens suppport for more deeply nested font paths)
+- update fonttools dependency to v4.28.2
+
 ## v2.0.0
 
 - drop support for Python interpreters < 3.7 (dropped by our fonttools dependency)
