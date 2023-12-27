@@ -5,6 +5,6 @@
 #    pip-compile
 #
 fonttools==4.38.0          # via font-v (setup.py)
-gitdb==4.0.10              # via gitpython
+gitdb==4.0.11              # via gitpython
 gitpython==3.1.31          # via font-v (setup.py)
 smmap==5.0.0              # via gitdb
