@@ -10,6 +10,8 @@ from __future__ import unicode_literals
 
 import os
 
+import git.repo.fun
+
 
 def dir_exists(dirpath):
     """Tests for existence of a directory on the string filepath"""
@@ -44,8 +46,16 @@ def get_git_root_path(filepath):
 
     # search up to five directories above for the git repo root
     for _ in range(6):
-        if dir_exists(os.path.join(gitroot_path, ".git")):
+        dot_git = os.path.join(gitroot_path, ".git")
+        if git.repo.fun.is_git_dir(dot_git):
             return gitroot_path
+        elif file_exists(dot_git):
+            # Returns something like ".../font-v/.git/worktrees/work-worktrees-work"
+            worktree_path = git.repo.fun.find_worktree_git_dir(dot_git)
+            if worktree_path:
+                # ".../font-v/.git/worktrees/work-worktrees-work" -> ".../font-v"
+                return worktree_path.split("/.git/worktrees/", 2)[0]
+
         gitroot_path = os.path.dirname(gitroot_path)
 
     raise IOError(
