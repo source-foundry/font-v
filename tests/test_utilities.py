@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import subprocess
 
 import pytest
 
@@ -51,6 +52,31 @@ def test_utilities_get_gitrootpath_function_returns_proper_path_two_levels_up():
 
 def test_utilities_get_gitrootpath_function_returns_proper_path_three_levels_up():
     filepath = "tests/testfiles/deepdir/test.txt"
+    gitdir_path = get_git_root_path(filepath)
+    assert os.path.basename(gitdir_path) == "font-v"
+    assert os.path.isdir(gitdir_path) is True
+
+
+@pytest.fixture
+def worktree_fixture():
+    subprocess.check_call(
+        ["git", "worktree", "add", "--detach", "/tmp/font-v", "HEAD^"]
+    )
+    yield
+    subprocess.call(
+        [
+            "git",
+            "worktree",
+            "remove",
+            "/tmp/font-v",
+        ]
+    )
+
+
+def test_utilities_get_gitrootpath_function_returns_proper_path_from_worktree(
+    worktree_fixture,
+):
+    filepath = "/tmp/font-v/README.md"
     gitdir_path = get_git_root_path(filepath)
     assert os.path.basename(gitdir_path) == "font-v"
     assert os.path.isdir(gitdir_path) is True
