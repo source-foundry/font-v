@@ -41,6 +41,11 @@ def get_git_root_path(filepath):
     :raises: IOError if unable to detect the root of the git repository through this path traversal
     """
 
+    if "GIT_DIR" in os.environ:
+        dot_git = os.path.abspath(os.environ["GIT_DIR"])
+        if git.repo.fun.is_git_dir(dot_git):
+            return os.path.dirname(dot_git)
+
     # begin by defining directory that contains font as the git root needle
     gitroot_path = os.path.dirname(os.path.abspath(filepath))
 

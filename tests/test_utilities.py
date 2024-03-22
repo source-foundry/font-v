@@ -88,6 +88,14 @@ def test_utilities_get_gitrootpath_function_raises_ioerror_six_levels_up():
         get_git_root_path(filepath)
 
 
+def test_utilities_get_gitrootpath_uses_git_dir_env_var():
+    os.environ["GIT_DIR"] = os.path.abspath(".git")
+    filepath = "/this/isnt/even/a/path/but/it/doesnt/matter"
+    gitdir_path = get_git_root_path(filepath)
+    assert os.path.basename(gitdir_path) == "font-v"
+    assert os.path.isdir(gitdir_path) is True
+
+
 def test_utilities_is_font_ttf():
     assert is_font("Test-Regular.ttf") is True
 
